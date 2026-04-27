@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Egale carwash Pro | Professional Invoicing</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    
+    <style>
+        :root { 
+            --primary: #2c3e50; --accent: #3498db; --success: #27ae60; 
+            --danger: #e74c3c; --warning: #f39c12; --swish: #FFCC00; 
+            --bank: #8e44ad; --bg: #f4f7f6; 
+        }
+        
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: #333; overflow-x: hidden; }
+
+        /* --- LOGIN PAGE STYLES --- */
+        #login-page {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                        url('https://images.unsplash.com/photo-1520333789090-1afc82db536a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            padding: 40px;
+            border-radius: 20px;
+            width: 350px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            color: white;
+        }
+
+        .login-card h1 { margin-bottom: 5px; font-weight: 800; letter-spacing: 1px; }
+        .login-card p { margin-bottom: 30px; font-size: 0.9rem; opacity: 0.8; }
+
+        .login-input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(255, 255, 255, 0.9);
+            box-sizing: border-box;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            background: var(--accent);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: 0.3s;
+        }
+
+        .btn-login:hover { background: #2980b9; transform: translateY(-2px); }
+
+        /* --- APP LAYOUT STYLES --- */
+        #main-app { display: none; } /* Hidden by default */
+        
+        nav { width: 260px; background: var(--primary); height: 100vh; color: white; padding: 20px; position: fixed; box-sizing: border-box; }
+        nav h2 { color: var(--accent); text-align: center; margin-bottom: 30px; }
+        nav ul { list-style: none; padding: 0; }
+        nav li { padding: 15px; cursor: pointer; border-radius: 8px; margin-bottom: 10px; transition: 0.2s; }
+        nav li:hover { background: #34495e; border-left: 4px solid var(--accent); }
+
+        main { margin-left: 260px; padding: 40px; width: 100%; box-sizing: border-box; min-height: 100vh; }
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 25px; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: #f8f9fa; font-weight: 600; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; margin-bottom: 10px; font-size: 14px; }
+        
+        .btn { background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .btn:hover { opacity: 0.8; }
+        .btn-pdf { background: #e67e22; margin-top: 10px; }
+        .btn-success { background: var(--success); }
+        .btn-warning { background: var(--warning); }
+        .btn-danger { background: var(--danger); }
+        .debt { color: var(--danger); font-weight: bold; }
+
+        .account-toggle { display: flex; gap: 10px; margin-bottom: 15px; }
+        .toggle-btn { flex: 1; padding: 10px; border: 2px solid #ddd; border-radius: 6px; cursor: pointer; text-align: center; font-weight: bold; background: white; }
+        .toggle-btn.active { border-color: var(--accent); color: var(--accent); background: #ebf5fb; }
+        
+        .report-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 25px; }
+        .stat-item { padding: 15px; border-radius: 10px; background: white; border-top: 4px solid var(--accent); text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .stat-item h4 { margin: 0; color: #7f8c8d; font-size: 12px; text-transform: uppercase; }
+        .stat-item p { margin: 10px 0 0; font-size: 20px; font-weight: bold; }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: white; padding: 30px; border-radius: 15px; width: 480px; position: relative; }
+        
+        .invoice-wrapper { border: 2px solid #f0f0f0; padding: 20px; color: #333; }
+        .invoice-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--primary); padding-bottom: 10px; margin-bottom: 20px; }
+        .logo-box { display: flex; align-items: center; gap: 10px; }
+        .logo-icon { background: var(--primary); color: white; width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 24px; }
+        .company-info h2 { margin: 0; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; font-size: 20px; }
+        
+        .inv-row { display: flex; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px solid #f9f9f9; padding-bottom: 4px; }
+        .inv-label { font-weight: bold; color: #7f8c8d; font-size: 13px; }
+        .inv-value { font-weight: 600; text-align: right; }
+        
+        .inv-total-section { background: #f8f9fa; padding: 15px; margin-top: 15px; border-radius: 8px; }
+        .balance-box { font-size: 18px; color: var(--danger); font-weight: 800; }
+
+        @media print {
+            body * { visibility: hidden; }
+            #modalContent, #modalContent * { visibility: visible; }
+            #modalContent { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none; }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="login-page">
+        <div class="login-card">
+            <div class="logo-icon" style="margin: 0 auto 15px auto;">E</div>
+            <h1>EGALE Carwash company</h1>
+            <p>Official Carwash Management System</p>
+            <form onsubmit="event.preventDefault(); handleLogin();">
+                <input type="text" id="user" class="login-input" placeholder="Username (admin)" required>
+                <input type="password" id="pass" class="login-input" placeholder="Password " required>
+                <button type="submit" class="btn-login">Secure Login</button>
+            </form>
+            <div id="login-err" style="color: #ff7675; margin-top: 10px; font-size: 0.8rem; display: none;">Invalid credentials!</div>
+        </div>
+    </div>
+
+    <div id="main-app">
+        <nav>
+            <h2>Egale carwash</h2>
+            <ul>
+                <li onclick="render('dashboard')">Dashboard</li>
+                <li onclick="render('customers')">Customer Database</li>
+                <li onclick="render('orders')">New Order</li>
+                <li onclick="render('reports')">History & Reports</li>
+                <li onclick="location.reload()" style="margin-top: 50px; color: #bdc3c7; font-size: 0.8rem;">Logout System</li>
+            </ul>
+        </nav>
+
+        <main id="app"></main>
+
+        <div id="modal" class="modal-overlay">
+            <div id="modalContent" class="modal-content"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- NEW LOGIN LOGIC ---
+        function handleLogin() {
+            const u = document.getElementById('user').value;
+            const p = document.getElementById('pass').value;
+            
+            // Hardcoded credentials for security
+            if(u === 'admin' && p === 'egale123') {
+                document.getElementById('login-page').style.display = 'none';
+                document.getElementById('main-app').style.display = 'flex';
+                render('dashboard'); // Start original code
+            } else {
+                document.getElementById('login-err').style.display = 'block';
+            }
+        }
+
+        // --- ORIGINAL CODE STARTS HERE ---
+        let db = JSON.parse(localStorage.getItem('sw_db')) || {
+            customers: [],
+            services: [
+                { id: 1, name: "Basic Wash", price: 25 },
+                { id: 2, name: "Premium Wash", price: 50 },
+                { id: 3, name: "Full Detailing", price: 120 }
+            ],
+            orders: [],
+            searchTerm: "",
+            historySearch: "",
+            currentOrderType: "Private"
+        };
+
+        function save() { localStorage.setItem('sw_db', JSON.stringify(db)); }
+
+        function getRevenue(days, customerPhone = null) {
+            const cutoff = new Date();
+            cutoff.setHours(0,0,0,0);
+            if(days > 0) cutoff.setDate(cutoff.getDate() - days);
+            let filtered = db.orders.filter(o => new Date(o.date) >= cutoff);
+            if(customerPhone) filtered = filtered.filter(o => o.phone === customerPhone);
+            return {
+                paid: filtered.filter(o => !o.isAdjustment && o.method !== 'credit').reduce((s, o) => s + o.amount, 0),
+                credit: filtered.filter(o => o.method === 'credit').reduce((s, o) => s + o.amount, 0),
+                rawOrders: filtered
+            };
+        }
+
+        function generatePDFReport(timeframe, customerPhone = null) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            let days = 0;
+            if(timeframe === 'Weekly') days = 7;
+            if(timeframe === 'Monthly') days = 30;
+            if(timeframe === 'Yearly') days = 365;
+            const data = getRevenue(days, customerPhone);
+            const title = customerPhone ? `Customer Report: ${customerPhone}` : `Whole Business Report`;
+            doc.setFontSize(18); doc.setTextColor(44, 62, 80); doc.text("Egale Carwash PRO - STATEMENT", 14, 20);
+            doc.setFontSize(12); doc.text(`${title} (${timeframe})`, 14, 30);
+            doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 38);
+            doc.setDrawColor(52, 152, 219); doc.line(14, 42, 196, 42);
+            doc.text(`Total Paid Revenue: $${data.paid.toFixed(2)}`, 14, 50);
+            doc.text(`Total New Credit: $${data.credit.toFixed(2)}`, 14, 58);
+            const tableRows = data.rawOrders.map(o => [new Date(o.date).toLocaleDateString(), o.name, o.detail, `$${o.amount.toFixed(2)}`, o.method.toUpperCase()]);
+            doc.autoTable({ startY: 65, head: [['Date', 'Customer', 'Service/Detail', 'Amount', 'Method']], body: tableRows, headStyles: { fillColor: [44, 62, 80] }, alternateRowStyles: { fillColor: [240, 240, 240] } });
+            doc.save(`Egale_Carwash_${timeframe}.pdf`);
+        }
+
+        function render(section) {
+            const app = document.getElementById('app');
+            if (section === 'dashboard') {
+                const owed = db.customers.reduce((s, c) => s + c.balance, 0);
+                app.innerHTML = `<h1>Dashboard</h1><div class="card"><h3>Total Business Credit: <span class="debt">$${owed.toFixed(2)}</span></h3></div>`;
+            }
+            else if (section === 'customers') {
+                const filtered = db.customers.filter(c => c.phone.includes(db.searchTerm) || c.name.toLowerCase().includes(db.searchTerm));
+                app.innerHTML = `<h1>Customer Database</h1>
+                    <div class="card">
+                        <form onsubmit="event.preventDefault(); db.customers.push({id:Date.now(), name:document.getElementById('cn').value, phone:document.getElementById('cp').value, vehicles:[document.getElementById('cv').value], balance:0}); save(); render('customers');">
+                            <div style="display:flex; gap:10px;">
+                                <input type="text" id="cn" placeholder="Name" required>
+                                <input type="text" id="cp" placeholder="Phone" required>
+                                <input type="text" id="cv" placeholder="Vehicle" required>
+                                <button class="btn">Register</button>
+                            </div>
+                        </form>
+                    </div>
+                    <input type="text" style="width:100%; padding:12px; margin-bottom:20px; border:2px solid var(--accent)" placeholder="Search Customers..." oninput="db.searchTerm = this.value.toLowerCase(); render('customers')" value="${db.searchTerm}">
+                    <div class="card">
+                        <table>
+                            <thead><tr><th>Customer</th><th>Vehicles</th><th>Debt</th><th>Action</th></tr></thead>
+                            <tbody>${filtered.map(c => `<tr>
+                                <td><strong>${c.name}</strong><br><small>${c.phone}</small></td>
+                                <td>${c.vehicles.join(', ')}</td>
+                                <td class="debt">$${c.balance.toFixed(2)}</td>
+                                <td><button class="btn btn-warning" onclick="openPaymentCalc(${c.id})">Payment Calc / Adjust</button></td>
+                            </tr>`).join('')}</tbody>
+                        </table>
+                    </div>`;
+            }
+            else if (section === 'orders') {
+                app.innerHTML = `<h1>New Wash Order</h1>
+                    <div class="account-toggle">
+                        <div class="toggle-btn ${db.currentOrderType === 'Private' ? 'active' : ''}" onclick="setOrderType('Private')">Private</div>
+                        <div class="toggle-btn ${db.currentOrderType === 'Company' ? 'active' : ''}" onclick="setOrderType('Company')">Company</div>
+                    </div>
+                    <div class="card">
+                        <form onsubmit="event.preventDefault(); processOrder()">
+                            <input type="text" id="oPhone" placeholder="Customer Phone" oninput="loadVehicles(this.value)">
+                            <select id="oVeh" onchange="handleVehicleChange(this.value)"><option value="">Enter phone...</option></select>
+                            <select id="oServ">${db.services.map(s => `<option value="${s.id}">${s.name} ($${s.price})</option>`).join('')}</select>
+                            <select id="oPay"><option value="paid">Paid</option><option value="credit">Credit</option></select>
+                            <button class="btn btn-success" style="width:100%">Process & Show Invoice</button>
+                        </form>
+                    </div>`;
+            }
+            else if (section === 'reports') {
+                const filteredOrders = db.orders.filter(o => o.name.toLowerCase().includes(db.historySearch) || o.phone.includes(db.historySearch) || o.detail.toLowerCase().includes(db.historySearch));
+                app.innerHTML = `<h1>History & Reports</h1>
+                    <div class="pdf-panel"><h3>Export PDF Statement</h3>
+                        <div style="display:flex; gap:10px;"><select id="pdfCustomer" style="flex:2"><option value="">Whole Business</option>${db.customers.map(c => `<option value="${c.phone}">${c.name}</option>`).join('')}</select>
+                        <select id="pdfTime" style="flex:1"><option value="Daily">Daily</option><option value="Weekly">Weekly</option><option value="Monthly">Monthly</option></select>
+                        <button class="btn btn-pdf" onclick="generatePDFReport(document.getElementById('pdfTime').value, document.getElementById('pdfCustomer').value)">Download</button></div></div>
+                    <div class="card">
+                        <input type="text" placeholder="🔍 Search History..." oninput="db.historySearch = this.value.toLowerCase(); render('reports')" value="${db.historySearch}">
+                        <table><thead><tr><th>Date</th><th>Customer</th><th>Detail</th><th>Amount</th><th>Method</th></tr></thead>
+                        <tbody>${filteredOrders.map(o => `<tr><td>${new Date(o.date).toLocaleDateString()}</td><td>${o.name}</td><td>${o.detail}</td><td>$${o.amount.toFixed(2)}</td><td class="clickable-status" style="color:${o.method==='credit'?'red':'green'}" onclick="showInvoice(${o.id})">${o.method}</td></tr>`).join('')}</tbody>
+                        </table></div>`;
+            }
+        }
+
+        function setOrderType(type) { db.currentOrderType = type; save(); render('orders'); }
+        
+        function openPaymentCalc(custId) {
+            const customer = db.customers.find(c => c.id === custId);
+            const content = document.getElementById('modalContent');
+            content.innerHTML = `
+                <div class="calc-header"><h2>${customer.name}</h2><p>Current Debt: $${customer.balance.toFixed(2)}</p></div>
+                <input type="number" id="pAmt" placeholder="Amount to Pay/Adjust" step="0.01">
+                <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:5px; margin-bottom:10px;">
+                    <button class="btn btn-success" onclick="adjustBalance(${customer.id}, 'subtract', 'Cash')">Cash</button>
+                    <button class="btn" style="background:var(--bank)" onclick="adjustBalance(${customer.id}, 'subtract', 'Bank')">Bank</button>
+                    <button class="btn" style="background:var(--swish); color:black" onclick="adjustBalance(${customer.id}, 'subtract', 'Swish')">Swish</button>
+                </div>
+                <button class="btn btn-danger" style="width:100%" onclick="adjustBalance(${customer.id}, 'add', 'Manual Adjustment')">+ Add Debt Adjustment</button>
+                <button class="btn" style="width:100%; margin-top:10px; background:#95a5a6" onclick="closeModal()">Cancel</button>`;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        function adjustBalance(id, type, method) {
+            const amt = parseFloat(document.getElementById('pAmt').value);
+            const customer = db.customers.find(c => c.id === id);
+            if(!amt || amt <= 0) return alert("Valid amount required");
+            const isConfirmed = confirm(`Are you sure to pay/adjust $${amt.toFixed(2)} via ${method}?`);
+            if(!isConfirmed) return;
+            const orderId = Date.now();
+            if (type === 'subtract') { 
+                customer.balance -= amt; 
+                db.orders.unshift({ id: orderId, phone: customer.phone, name: customer.name, detail: `Account Payment (${method})`, amount: amt, method: 'paid', date: new Date().toISOString(), isAdjustment: true }); 
+            } 
+            else { 
+                customer.balance += amt; 
+                db.orders.unshift({ id: orderId, phone: customer.phone, name: customer.name, detail: `Manual Debt Adjustment`, amount: amt, method: 'credit', date: new Date().toISOString(), isAdjustment: true }); 
+            }
+            save(); showInvoice(orderId); render('customers');
+        }
+
+        function loadVehicles(phone) {
+            const c = db.customers.find(x => x.phone === phone);
+            const s = document.getElementById('oVeh');
+            if(c) {
+                let options = c.vehicles.map(v => `<option value="${v}">${v}</option>`).join('');
+                options += `<option value="ADD_NEW_VEHICLE">+ Add New Vehicle</option>`;
+                s.innerHTML = options;
+            } else { s.innerHTML = '<option value="">No Customer Found</option>'; }
+        }
+
+        function handleVehicleChange(val) {
+            if (val === "ADD_NEW_VEHICLE") {
+                const phone = document.getElementById('oPhone').value;
+                const newVehicle = prompt("Enter vehicle plate/model:");
+                if (newVehicle) { db.customers.find(c => c.phone === phone).vehicles.push(newVehicle); save(); loadVehicles(phone); document.getElementById('oVeh').value = newVehicle; }
+            }
+        }
+
+        function processOrder() {
+            const phone = document.getElementById('oPhone').value;
+            const cust = db.customers.find(c => c.phone === phone);
+            const serv = db.services.find(s => s.id == document.getElementById('oServ').value);
+            const method = document.getElementById('oPay').value;
+            if(!cust) return alert("Select a valid customer first.");
+            if(method === 'credit') cust.balance += serv.price;
+            const orderId = Date.now();
+            db.orders.unshift({ id: orderId, phone, name: cust.name, vehicle: document.getElementById('oVeh').value, detail: `${serv.name} (${db.currentOrderType})`, amount: serv.price, method, date: new Date().toISOString() });
+            save(); showInvoice(orderId);
+        }
+
+        function showInvoice(orderId) {
+            const order = db.orders.find(o => o.id === orderId);
+            const customer = db.customers.find(c => c.phone === order.phone);
+            const content = document.getElementById('modalContent');
+            content.innerHTML = `
+                <div class="invoice-wrapper">
+                    <div class="invoice-header">
+                        <div class="logo-box"><div class="logo-icon">E</div><div class="company-info"><h2>Egale Carwash</h2></div></div>
+                        <div style="text-align:right"><small>Receipt ID</small><br><strong>#${order.id.toString().slice(-6)}</strong></div>
+                    </div>
+                    <div class="inv-body">
+                        <div class="inv-row"><span class="inv-label">Type:</span> <span class="inv-value">${order.isAdjustment ? 'Account Adjustment' : 'Service Order'}</span></div>
+                        <div class="inv-row"><span class="inv-label">Date:</span> <span class="inv-value">${new Date(order.date).toLocaleString()}</span></div>
+                        <div class="inv-row"><span class="inv-label">Customer:</span> <span class="inv-value">${order.name}</span></div>
+                        <div class="inv-row"><span class="inv-label">Vehicle:</span> <span class="inv-value">${order.vehicle || 'N/A'}</span></div>
+                        <div class="inv-row"><span class="inv-label">Wash Service:</span> <span class="inv-value">${order.detail}</span></div>
+                        <div class="inv-row"><span class="inv-label">Status:</span> <span class="inv-value" style="color:${order.method === 'credit' ? 'red' : 'green'}">${order.method.toUpperCase()}</span></div>
+                    </div>
+                    <div class="inv-total-section">
+                        <div class="inv-row"><span class="inv-label">Total Amount:</span> <span class="inv-value">$${order.amount.toFixed(2)}</span></div>
+                        <div class="inv-row" style="border-top: 1px solid #ccc; padding-top:10px; margin-top:10px;"><span class="inv-label">Account Balance:</span> <span class="inv-value balance-box">$${customer.balance.toFixed(2)}</span></div>
+                    </div>
+                    <div class="no-print" style="display:flex; gap:10px; margin-top:20px;"><button class="btn btn-success" style="flex:1" onclick="window.print()">Print Invoice</button><button class="btn" style="flex:1; background:#95a5a6" onclick="closeModal()">Close</button></div>
+                </div>`;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        function closeModal() { document.getElementById('modal').style.display = 'none'; render(db.customers.length > 0 ? 'customers' : 'dashboard'); }
+    </script>
+</body>
+</html>
