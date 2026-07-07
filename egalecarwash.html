@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Egale carwash Pro | Professional Invoicing</title>
+    <title>Egale Carwash Pro | Professional Invoicing & Advanced Subscriptions</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     
@@ -11,7 +11,7 @@
         :root { 
             --primary: #2c3e50; --accent: #3498db; --success: #27ae60; 
             --danger: #e74c3c; --warning: #f39c12; --swish: #FFCC00; 
-            --bank: #8e44ad; --bg: #f4f7f6; 
+            --bank: #8e44ad; --bg: #f4f7f6; --sub-color: #6c5ce7;
         }
         
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: #333; overflow-x: hidden; }
@@ -40,10 +40,8 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 15px 35px rgba(0,0,0,0.5);
             color: white;
+            box-sizing: border-box;
         }
-
-        .login-card h1 { margin-bottom: 5px; font-weight: 800; letter-spacing: 1px; }
-        .login-card p { margin-bottom: 30px; font-size: 0.9rem; opacity: 0.8; }
 
         .login-input {
             width: 100%;
@@ -53,6 +51,7 @@
             border: none;
             background: rgba(255, 255, 255, 0.9);
             box-sizing: border-box;
+            color: #333;
         }
 
         .btn-login {
@@ -68,31 +67,31 @@
             transition: 0.3s;
         }
 
-        .btn-login:hover { background: #2980b9; transform: translateY(-2px); }
-
         /* --- APP LAYOUT STYLES --- */
-        #main-app { display: none; } /* Hidden by default */
+        #main-app { display: none; } 
         
-        nav { width: 260px; background: var(--primary); height: 100vh; color: white; padding: 20px; position: fixed; box-sizing: border-box; }
-        nav h2 { color: var(--accent); text-align: center; margin-bottom: 30px; }
+        nav { width: 260px; background: var(--primary); height: 100vh; color: white; padding: 20px; position: fixed; box-sizing: border-box; z-index: 99; transition: all 0.3s ease; }
+        nav h2 { color: var(--accent); text-align: center; margin-bottom: 20px; }
         nav ul { list-style: none; padding: 0; }
         nav li { padding: 15px; cursor: pointer; border-radius: 8px; margin-bottom: 10px; transition: 0.2s; }
         nav li:hover { background: #34495e; border-left: 4px solid var(--accent); }
 
-        main { margin-left: 260px; padding: 40px; width: 100%; box-sizing: border-box; min-height: 100vh; }
+        .mobile-menu-btn { display: none; background: var(--primary); color: white; padding: 15px; font-weight: bold; cursor: pointer; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+
+        main { margin-left: 260px; padding: 40px; width: calc(100% - 260px); box-sizing: border-box; min-height: 100vh; transition: all 0.3s ease; }
         .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 25px; }
         
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        .table-responsive-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 10px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; white-space: nowrap; }
         th { background: #f8f9fa; font-weight: 600; }
-        input, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; margin-bottom: 10px; font-size: 14px; }
+        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; margin-bottom: 10px; font-size: 14px; }
         
-        .btn { background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        .btn:hover { opacity: 0.8; }
-        .btn-pdf { background: #e67e22; margin-top: 10px; }
+        .btn { background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.3s; display: inline-block; text-align: center; }
         .btn-success { background: var(--success); }
         .btn-warning { background: var(--warning); }
         .btn-danger { background: var(--danger); }
+        .btn-sub { background: var(--sub-color); }
         .debt { color: var(--danger); font-weight: bold; }
 
         .account-toggle { display: flex; gap: 10px; margin-bottom: 15px; }
@@ -104,10 +103,10 @@
         .stat-item h4 { margin: 0; color: #7f8c8d; font-size: 12px; text-transform: uppercase; }
         .stat-item p { margin: 10px 0 0; font-size: 20px; font-weight: bold; }
 
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-content { background: white; padding: 30px; border-radius: 15px; width: 480px; position: relative; }
-        
-        .invoice-wrapper { border: 2px solid #f0f0f0; padding: 20px; color: #333; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 10px; box-sizing: border-box; }
+        .modal-content { background: white; padding: 30px; border-radius: 15px; width: 480px; max-width: 100%; position: relative; max-height: 90vh; overflow-y: auto; box-sizing: border-box; }
+
+        .invoice-wrapper { border: 2px solid #f0f0f0; padding: 20px; color: #333; background: white; }
         .invoice-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--primary); padding-bottom: 10px; margin-bottom: 20px; }
         .logo-box { display: flex; align-items: center; gap: 10px; }
         .logo-icon { background: var(--primary); color: white; width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 24px; }
@@ -119,6 +118,27 @@
         
         .inv-total-section { background: #f8f9fa; padding: 15px; margin-top: 15px; border-radius: 8px; }
         .balance-box { font-size: 18px; color: var(--danger); font-weight: 800; }
+
+        .perm-badge { font-size: 10px; background: #e0e6ed; color: #34495e; padding: 2px 6px; border-radius: 4px; margin-right: 4px; display: inline-block; margin-bottom: 4px; }
+        .form-label { font-size: 11px; font-weight: bold; color: #7f8c8d; display: block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .sub-badge { font-size: 11px; padding: 3px 8px; border-radius: 20px; font-weight: bold; display: inline-block; }
+        .sub-active { background: #d4edda; color: #155724; }
+        .sub-expired { background: #f8d7da; color: #721c24; }
+
+        @media (max-width: 768px) {
+            .mobile-menu-btn { display: flex; }
+            nav { width: 100%; height: auto; max-height: 0; padding: 0 20px; overflow: hidden; position: fixed; top: 49px; left: 0; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+            nav.open { max-height: 100vh; padding: 20px; }
+            nav style { display: none; }
+            nav li { text-align: center; padding: 12px; }
+            main { margin-left: 0; width: 100%; padding: 15px; }
+            .report-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .stat-item p { font-size: 16px; }
+            .invoice-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+            td, th { padding: 8px; font-size: 13px; }
+            .modal-content { padding: 15px; }
+        }
 
         @media print {
             body * { visibility: hidden; }
@@ -132,12 +152,12 @@
 
     <div id="login-page">
         <div class="login-card">
-            <div class="logo-icon" style="margin: 0 auto 15px auto;">E</div>
-            <h1>EGALE Carwash company</h1>
-            <p>Official Carwash Management System</p>
+            <div class="logo-icon" style="margin: 0 auto 15px auto;">🚗</div>
+            <h1>EGALE Carwash</h1>
+            <p>Admin Portal - Use admin</p>
             <form onsubmit="event.preventDefault(); handleLogin();">
-                <input type="text" id="user" class="login-input" placeholder="Username (admin)" required>
-                <input type="password" id="pass" class="login-input" placeholder="Password " required>
+                <input type="text" id="user" class="login-input" placeholder="Username" required>
+                <input type="password" id="pass" class="login-input" placeholder="Password" required>
                 <button type="submit" class="btn-login">Secure Login</button>
             </form>
             <div id="login-err" style="color: #ff7675; margin-top: 10px; font-size: 0.8rem; display: none;">Invalid credentials!</div>
@@ -145,55 +165,169 @@
     </div>
 
     <div id="main-app">
-        <nav>
-            <h2>Egale carwash</h2>
-            <ul>
-                <li onclick="render('dashboard')">Dashboard</li>
-                <li onclick="render('customers')">Customer Database</li>
-                <li onclick="render('orders')">New Order</li>
-                <li onclick="render('reports')">History & Reports</li>
-                <li onclick="location.reload()" style="margin-top: 50px; color: #bdc3c7; font-size: 0.8rem;">Logout System</li>
-            </ul>
-        </nav>
-
-        <main id="app"></main>
-
-        <div id="modal" class="modal-overlay">
-            <div id="modalContent" class="modal-content"></div>
+        <div class="mobile-menu-btn" onclick="toggleMobileMenu()">
+            <span>🚗 EGALE Carwash Pro</span>
+            <span id="hamburger-icon">☰</span>
         </div>
+        <nav id="sidebar-nav">
+            <h2>Egale carwash</h2>
+            <div style="margin-bottom:15px; padding:0 15px;">
+                <select id="langSelect" onchange="setLanguage(this.value)" style="width:100%; padding:6px; background:#34495e; color:white; border:1px solid #2c3e50; border-radius:4px; font-size:12px; outline:none;">
+                    <option value="en">🇬🇧 English</option>
+                    <option value="sv">🇸🇪 Svenska</option>
+                    <option value="so">🇸🇴 Soomaali</option>
+                </select>
+            </div>
+            <ul id="nav-list"></ul>
+        </nav>
+        <main id="app"></main>
+        <div id="modal" class="modal-overlay"><div id="modalContent" class="modal-content"></div></div>
     </div>
 
     <script>
-        // --- NEW LOGIN LOGIC ---
-        function handleLogin() {
-            const u = document.getElementById('user').value;
-            const p = document.getElementById('pass').value;
-            
-            // Hardcoded credentials for security
-            if(u === 'admin' && p === 'egale123') {
-                document.getElementById('login-page').style.display = 'none';
-                document.getElementById('main-app').style.display = 'flex';
-                render('dashboard'); // Start original code
-            } else {
-                document.getElementById('login-err').style.display = 'block';
-            }
-        }
+        const swedenRegions = ["Blekinge", "Dalarna", "Gotland", "Gävleborg", "Halland", "Jämtland", "Jönköping", "Kalmar", "Kronoberg", "Norrbotten", "Skåne", "Stockholm", "Södermanland", "Uppsala", "Värmland", "Västerbotten", "Västernorrland", "Västmanland", "Västra Götaland", "Örebro", "Östergötland"];
+        const defaultServices = [
+            { id: 1, name: "Basic Wash", price: 150 },
+            { id: 2, name: "Premiumtvätt", price: 250 },
+            { id: 3, name: "Asfalt Borttagning", price: 200 },
+            { id: 4, name: "Invändigt", price: 300 },
+            { id: 5, name: "Motortvätt", price: 250 },
+            { id: 6, name: "Kemtvätt av Säten", price: 800 },
+            { id: 7, name: "Liten rekonditionering", price: 1500 },
+            { id: 8, name: "Stor rekonditionering", price: 2500 },
+            { id: 9, name: "Full Detailing", price: 3000 },
+            { id: 10, name: "Annat", price: 0 }
+        ];
 
-        // --- ORIGINAL CODE STARTS HERE ---
+        const i18n = {
+            en: {
+                dash: "Dashboard", cust: "Customer Database", order: "New Order", rep: "History & Reports", 
+                usr: "User Management", out: "Logout System", subs: "Subscriptions Menu",
+                today: "Today", week: "This Week", month: "This Month", debt: "Total Debt", welcome: "Welcome",
+                nreg: "+ New Registration", oreg: "Open Vehicle Registry", search: "Search Customers...",
+                type: "Type", customer: "Customer", pnum: "Personal/Org No.", vcnt: "Vehicle Count",
+                dmoms: "Debt / Moms", act: "Action", pay: "Pay", edit: "Edit", inv: "Invoice", del: "Delete",
+                currStaff: "Current Staff", sysOn: "System Online"
+            },
+            sv: {
+                dash: "Översikt", cust: "Kunddatabas", order: "Ny Beställning", rep: "Historik & Rapporter", 
+                usr: "Användarhantering", out: "Logga Ut", subs: "Abonnemang",
+                today: "Idag", week: "Denna Vecka", month: "Denna Månad", debt: "Total Skuld", welcome: "Välkommen",
+                nreg: "+ Ny Registrering", oreg: "Öppna Fordonsregister", search: "Sök Kunder...",
+                type: "Typ", customer: "Kund", pnum: "Person/Org Nr.", vcnt: "Antal Fordon",
+                dmoms: "Skuld / Moms", act: "Åtgärd", pay: "Betala", edit: "Ändra", inv: "Faktura", del: "Radera",
+                currStaff: "Aktiv Personal", sysOn: "System Online"
+            },
+            so: {
+                dash: "Shaxda", cust: "Macaamiisha", order: "Dalab Cusub", rep: "Warbixinada", 
+                usr: "Maamulka", out: "Ka Bax", subs: "Diiwaanka Subscriptions",
+                today: "Maanta", week: "Usbuucan", month: "Bishan", debt: "Wadarta Deynta", welcome: "Soo Dhawoow",
+                nreg: "+ Diiwaangelin Cusub", oreg: "Diiwaanka Gaadiidka", search: "Raadi Macmiil...",
+                type: "Nooca", customer: "Macmiilka", pnum: "Aqoonsiga", vcnt: "Tirada Gaadiidka",
+                dmoms: "Deynta / Moms", act: "Falka", pay: "Bixi", edit: "Bedel", inv: "Qaansheegta", del: "Tirtir",
+                currStaff: "Shaqaalaha Hada", sysOn: "Nidaamka Shaqeynaya"
+            }
+        };
+
         let db = JSON.parse(localStorage.getItem('sw_db')) || {
             customers: [],
-            services: [
-                { id: 1, name: "Basic Wash", price: 25 },
-                { id: 2, name: "Premium Wash", price: 50 },
-                { id: 3, name: "Full Detailing", price: 120 }
-            ],
+            services: defaultServices,
             orders: [],
             searchTerm: "",
             historySearch: "",
-            currentOrderType: "Private"
+            filterStatus: "all",
+            filterFrom: "",
+            filterTo: "",
+            currentOrderType: "Private",
+            language: "en",
+            users: [{ 
+                id: 1, 
+                name: 'System Admin', 
+                user: 'admin', 
+                pass: 'egale123', 
+                role: 'Admin', 
+                status: 'Active',
+                permissions: { canDelete: true, canRestore: true, canClearLogs: true, canEditSettings: true }
+            }],
+            activityLog: [],
+            recycleBin: { customers: [], orders: [], users: [] }
         };
 
+        if (!db.recycleBin) db.recycleBin = { customers: [], orders: [], users: [] };
+        if (db.filterStatus === undefined) db.filterStatus = 'all';
+        if (db.filterFrom === undefined) db.filterFrom = '';
+        if (db.filterTo === undefined) db.filterTo = '';
+        if (db.language === undefined) db.language = 'en';
+
+        if (!db.services || !db.services.length) {
+            db.services = defaultServices;
+        } else {
+            const serviceById = new Map(defaultServices.map(s => [s.id, s]));
+            db.services = db.services.map(s => serviceById.get(s.id) || s);
+            defaultServices.forEach(def => {
+                if (!db.services.some(s => s.id === def.id)) db.services.push(def);
+            });
+        }
+
+        let currentUser = null;
+        let currentSection = 'dashboard';
+
+        function toggleMobileMenu() {
+            const nav = document.getElementById('sidebar-nav');
+            const icon = document.getElementById('hamburger-icon');
+            if(nav.classList.contains('open')) {
+                nav.classList.remove('open');
+                icon.innerText = "☰";
+            } else {
+                nav.classList.add('open');
+                icon.innerText = "✕";
+            }
+        }
+
+        function t(key) {
+            const lang = db.language || 'en';
+            return i18n[lang][key] || key;
+        }
+
+        function setLanguage(lang) {
+            db.language = lang;
+            save();
+            updateNav();
+            if(currentUser) render(currentSection);
+        }
+
+        function updateNav() {
+            document.getElementById('langSelect').value = db.language || 'en';
+            document.getElementById('nav-list').innerHTML = `
+                <li onclick="render('dashboard')">${t('dash')}</li>
+                <li onclick="render('customers')">${t('cust')}</li>
+                <li onclick="render('orders')">${t('order')}</li>
+                <li onclick="render('subscriptions')">👑 ${t('subs')}</li>
+                <li onclick="render('reports')">${t('rep')}</li>
+                <li onclick="render('users')">${t('usr')}</li>
+                <li onclick="handleLogout()" style="margin-top: 50px; color: #bdc3c7;">${t('out')}</li>
+            `;
+        }
+
+        function cleanupDuplicates() {
+            const seenPhone = new Set();
+            const seenPNum = new Set();
+            db.customers = db.customers.filter(c => {
+                const phone = c.phone.trim();
+                const pnum = c.pNum ? c.pNum.trim() : null;
+                if (seenPhone.has(phone)) return false;
+                if (pnum && seenPNum.has(pnum)) return false;
+                
+                seenPhone.add(phone);
+                if (pnum) seenPNum.add(pnum);
+                return true;
+            });
+            save();
+        }
+        cleanupDuplicates();
+
         function save() { localStorage.setItem('sw_db', JSON.stringify(db)); }
+        function closeModal() { document.getElementById('modal').style.display = 'none'; }
 
         function getRevenue(days, customerPhone = null) {
             const cutoff = new Date();
@@ -208,183 +342,1546 @@
             };
         }
 
-        function generatePDFReport(timeframe, customerPhone = null) {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            let days = 0;
-            if(timeframe === 'Weekly') days = 7;
-            if(timeframe === 'Monthly') days = 30;
-            if(timeframe === 'Yearly') days = 365;
-            const data = getRevenue(days, customerPhone);
-            const title = customerPhone ? `Customer Report: ${customerPhone}` : `Whole Business Report`;
-            doc.setFontSize(18); doc.setTextColor(44, 62, 80); doc.text("Egale Carwash PRO - STATEMENT", 14, 20);
-            doc.setFontSize(12); doc.text(`${title} (${timeframe})`, 14, 30);
-            doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 38);
-            doc.setDrawColor(52, 152, 219); doc.line(14, 42, 196, 42);
-            doc.text(`Total Paid Revenue: $${data.paid.toFixed(2)}`, 14, 50);
-            doc.text(`Total New Credit: $${data.credit.toFixed(2)}`, 14, 58);
-            const tableRows = data.rawOrders.map(o => [new Date(o.date).toLocaleDateString(), o.name, o.detail, `$${o.amount.toFixed(2)}`, o.method.toUpperCase()]);
-            doc.autoTable({ startY: 65, head: [['Date', 'Customer', 'Service/Detail', 'Amount', 'Method']], body: tableRows, headStyles: { fillColor: [44, 62, 80] }, alternateRowStyles: { fillColor: [240, 240, 240] } });
-            doc.save(`Egale_Carwash_${timeframe}.pdf`);
+        // Subscriptions Validation Mechanics Per Plate Number
+        function getVehicleSubscriptionStatus(customer, plateStr) {
+            if (!customer || !customer.subscriptionsList || !customer.subscriptionsList.length) {
+                return { status: "Expired", isActive: false, daysRemaining: 0 };
+            }
+            const normPlate = normalizePlate(plateStr);
+            const sub = customer.subscriptionsList.find(s => normalizePlate(s.plate) === normPlate && s.active);
+            if (!sub) {
+                return { status: "Expired", isActive: false, daysRemaining: 0 };
+            }
+            const expiry = new Date(sub.expiryDate);
+            const now = new Date();
+            if (now > expiry) {
+                return { status: "Expired", isActive: false, daysRemaining: 0 };
+            }
+            const diffTime = Math.abs(expiry - now);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return { status: "Active", isActive: true, daysRemaining: diffDays, planName: sub.planName, expiryDate: sub.expiryDate, startDate: sub.startDate };
+        }
+
+        function getCustomerGeneralSubscriptionSummary(customer) {
+            if(!customer.subscriptionsList || !customer.subscriptionsList.length) return { hasActive: false, count: 0 };
+            const activeSubs = customer.subscriptionsList.filter(s => {
+                return s.active && new Date() <= new Date(s.expiryDate);
+            });
+            return { hasActive: activeSubs.length > 0, count: activeSubs.length };
+        }
+
+        function getWashesUsedThisMonth(phone) {
+            const now = new Date();
+            const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+            return db.orders.filter(o => o.phone === phone && new Date(o.date) >= startOfMonth && !o.isAdjustment && !o.isSubscriptionPayment).length;
+        }
+
+        function handleLogin() {
+            const u = document.getElementById('user').value;
+            const p = document.getElementById('pass').value;
+            const userObj = db.users.find(x => x.user === u && x.pass === p);
+            if (userObj && userObj.status === 'Active') {
+                currentUser = userObj;
+                if (!currentUser.permissions) {
+                    currentUser.permissions = {
+                        canDelete: currentUser.role === 'Admin',
+                        canRestore: currentUser.role === 'Admin',
+                        canClearLogs: currentUser.role === 'Admin',
+                        canEditSettings: currentUser.role === 'Admin'
+                    };
+                }
+                localStorage.setItem('egale_session', JSON.stringify(currentUser));
+                document.getElementById('login-page').style.display = 'none';
+                document.getElementById('main-app').style.display = 'block';
+                logActivity('LOGIN', 'User Logged In');
+                updateNav();
+                render('dashboard');
+            } else {
+                document.getElementById('login-err').style.display = 'block';
+            }
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('egale_session');
+            location.reload();
+        }
+
+        function checkActiveSession() {
+            const cachedUser = localStorage.getItem('egale_session');
+            if(cachedUser) {
+                currentUser = JSON.parse(cachedUser);
+                document.getElementById('login-page').style.display = 'none';
+                document.getElementById('main-app').style.display = 'block';
+                updateNav();
+                render('dashboard');
+            }
+        }
+
+        function logActivity(action, details) {
+            if(!db.activityLog) db.activityLog = [];
+            db.activityLog.unshift({ time: new Date().toLocaleString(), actor: currentUser ? currentUser.user : 'System', action, details });
+            save();
         }
 
         function render(section) {
+            currentSection = section;
+            const nav = document.getElementById('sidebar-nav');
+            const icon = document.getElementById('hamburger-icon');
+            if(nav.classList.contains('open')) {
+                nav.classList.remove('open');
+                icon.innerText = "☰";
+            }
+
             const app = document.getElementById('app');
+            const sessionHeader = `
+                <div style="background:white; padding:15px; border-radius:12px; margin-bottom:25px; display:flex; justify-content:space-between; align-items:center; border-left:5px solid var(--accent); box-shadow: 0 4px 10px rgba(0,0,0,0.03);">
+                    <div>
+                        <span style="color:#7f8c8d; font-size:12px; text-transform:uppercase; letter-spacing:1px; display:block;">${t('currStaff')}</span>
+                        <b style="font-size:16px;">${currentUser.name}</b> <span style="background:var(--primary); color:white; font-size:10px; padding:2px 8px; border-radius:10px; margin-left:5px; vertical-align:middle;">${currentUser.role}</span>
+                    </div>
+                    <div style="text-align:right;">
+                        <span style="color:#7f8c8d; font-size:12px; display:block;">${new Date().toDateString()}</span>
+                        <small style="color:var(--success); font-weight:bold;">● ${t('sysOn')}</small>
+                    </div>
+                </div>`;
+
             if (section === 'dashboard') {
-                const owed = db.customers.reduce((s, c) => s + c.balance, 0);
-                app.innerHTML = `<h1>Dashboard</h1><div class="card"><h3>Total Business Credit: <span class="debt">$${owed.toFixed(2)}</span></h3></div>`;
+                const today = getRevenue(0);
+                const week = getRevenue(7);
+                const month = getRevenue(30);
+                const owed = db.customers.reduce((s, c) => s + (c.balance || 0), 0);
+                app.innerHTML = sessionHeader + `<h1>${t('dash')}</h1>
+                    <div class="report-grid">
+                        <div class="stat-item"><h4>${t('today')}</h4><p>${formatSEK(today.paid)}</p></div>
+                        <div class="stat-item"><h4>${t('week')}</h4><p>${formatSEK(week.paid)}</p></div>
+                        <div class="stat-item"><h4>${t('month')}</h4><p>${formatSEK(month.paid)}</p></div>
+                        <div class="stat-item" style="border-top-color:var(--danger)"><h4>${t('debt')}</h4><p class="debt">${formatSEK(owed)}</p></div>
+                    </div><div class="card"><h3>${t('welcome')}, ${currentUser.name}.</h3></div>`;
             }
             else if (section === 'customers') {
                 const filtered = db.customers.filter(c => c.phone.includes(db.searchTerm) || c.name.toLowerCase().includes(db.searchTerm));
-                app.innerHTML = `<h1>Customer Database</h1>
-                    <div class="card">
-                        <form onsubmit="event.preventDefault(); db.customers.push({id:Date.now(), name:document.getElementById('cn').value, phone:document.getElementById('cp').value, vehicles:[document.getElementById('cv').value], balance:0}); save(); render('customers');">
-                            <div style="display:flex; gap:10px;">
-                                <input type="text" id="cn" placeholder="Name" required>
-                                <input type="text" id="cp" placeholder="Phone" required>
-                                <input type="text" id="cv" placeholder="Vehicle" required>
-                                <button class="btn">Register</button>
-                            </div>
-                        </form>
+                const totalDebt = filtered.reduce((s, c) => s + (c.balance || 0), 0);
+                
+                app.innerHTML = sessionHeader + `<h1>${t('cust')}</h1>
+                    <div class="card" style="display:flex; justify-content:space-between; align-items:center; gap:15px; flex-wrap:wrap;">
+                        <button class="btn btn-success" onclick="openRegModal()">${t('nreg')}</button>
+                        <button class="btn" onclick="openVehicleRegistryModal()" style="max-width:220px;">${t('oreg')}</button>
                     </div>
-                    <input type="text" style="width:100%; padding:12px; margin-bottom:20px; border:2px solid var(--accent)" placeholder="Search Customers..." oninput="db.searchTerm = this.value.toLowerCase(); render('customers')" value="${db.searchTerm}">
-                    <div class="card">
-                        <table>
-                            <thead><tr><th>Customer</th><th>Vehicles</th><th>Debt</th><th>Action</th></tr></thead>
-                            <tbody>${filtered.map(c => `<tr>
-                                <td><strong>${c.name}</strong><br><small>${c.phone}</small></td>
-                                <td>${c.vehicles.join(', ')}</td>
-                                <td class="debt">$${c.balance.toFixed(2)}</td>
-                                <td><button class="btn btn-warning" onclick="openPaymentCalc(${c.id})">Payment Calc / Adjust</button></td>
-                            </tr>`).join('')}</tbody>
-                        </table>
-                    </div>`;
+                    <input type="text" style="width:100%; padding:12px; margin-bottom:20px; border:2px solid var(--accent)" placeholder="${t('search')}" oninput="db.searchTerm = this.value.toLowerCase(); render('customers')" value="${db.searchTerm}">
+                    <div class="card"><div class="table-responsive-container"><table><thead><tr><th>${t('type')}</th><th>${t('customer')}</th><th>${t('pnum')}</th><th>${t('vcnt')}</th><th>Sub Cars</th><th>${t('dmoms')}</th><th>${t('act')}</th></tr></thead>
+                    <tbody>${filtered.map(c => {
+                        const totalVat = getCustomerTotalVat(c);
+                        const subSummary = getCustomerGeneralSubscriptionSummary(c);
+                        return `<tr>
+                        <td><small style="padding:2px 6px; border-radius:4px; background:#eee;">${c.type || 'Private'}</small></td>
+                        <td><b>${c.name}</b>${c.company ? `<br><small style="color:var(--accent)">${c.company}</small>` : ''}<br><small>${c.phone}</small></td>
+                        <td>
+                            <small>${c.pNum || 'N/A'}</small><br>
+                            <small style="color:#7f8c8d">${c.email || ''}</small>
+                        </td>
+                        <td>${c.vehicles.length}</td>
+                        <td><span class="sub-badge ${subSummary.hasActive ? 'sub-active' : 'sub-expired'}">${subSummary.count} Active</span></td>
+                        <td class="debt">${formatSEK(c.balance || 0)}<br><small style="color:#777;">Moms: ${formatSEK(totalVat)}</small></td>
+                        <td>
+                            <button class="btn btn-warning" style="padding: 5px 10px; font-size: 12px;" onclick="openPaymentCalc(${c.id})">${t('pay')}</button>
+                            <button class="btn" style="padding: 5px 10px; font-size: 12px; background:var(--primary)" onclick="openRegModal(${c.id})">${t('edit')}</button>
+                            <button class="btn" style="padding: 5px 10px; font-size: 12px; background:var(--bank)" onclick="showMonthlyInvoice(${c.id})">${t('inv')}</button>
+                            ${currentUser.permissions?.canDelete ? `<button class="btn btn-danger" style="padding: 5px 10px; font-size: 12px;" onclick="deleteCustomerData(${c.id})">${t('del')}</button>` : ''}
+                        </td>
+                    </tr>`}).join('')}</tbody>
+                    <tfoot style="background:#f8f9fa; font-weight:bold; border-top: 2px solid #dee2e6;">
+                        <tr>
+                            <td colspan="5" style="text-align:right">Search Results Total Owed:</td>
+                            <td class="debt">${formatSEK(totalDebt)}</td>
+                            <td>${filtered.length} Customers</td>
+                        </tr>
+                    </tfoot>
+                    </table></div></div>`;
             }
             else if (section === 'orders') {
-                app.innerHTML = `<h1>New Wash Order</h1>
+                app.innerHTML = sessionHeader + `<h1>${t('order')}</h1>
                     <div class="account-toggle">
-                        <div class="toggle-btn ${db.currentOrderType === 'Private' ? 'active' : ''}" onclick="setOrderType('Private')">Private</div>
-                        <div class="toggle-btn ${db.currentOrderType === 'Company' ? 'active' : ''}" onclick="setOrderType('Company')">Company</div>
+                        <div class="toggle-btn ${db.currentOrderType === 'Private' ? 'active' : ''}" onclick="setOrderType('Private')">Private Customer</div>
+                        <div class="toggle-btn ${db.currentOrderType === 'Company' ? 'active' : ''}" onclick="setOrderType('Company')">Corporate Client</div>
                     </div>
+                    
+                    <form onsubmit="event.preventDefault(); processOrder()">
+                        <div style="display:flex; gap:20px; flex-wrap:wrap;">
+                            
+                            <div style="flex:1; min-width:300px; background:white; padding:25px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.05); border-top: 4px solid var(--accent);">
+                                <h3 style="margin-top:0; font-size:15px; color:var(--primary); text-transform:uppercase; letter-spacing:1px; margin-bottom:20px;">1. Client Details</h3>
+                                
+                                <label class="form-label">Search Method</label>
+                                <select id="oSearchBy" onchange="updateOrderSearchPlaceholder(); loadVehicles(document.getElementById('oSearch').value)">
+                                    <option value="phone">Phone Number</option>
+                                    <option value="plate">Car Plate (Reg. Nr)</option>
+                                    <option value="personal">Personal / Org Number</option>
+                                </select>
+                                
+                                <label class="form-label">Search Query</label>
+                                <input type="text" id="oSearch" placeholder="Search by phone..." oninput="loadVehicles(this.value)">
+                                
+                                <div id="orderCustPreview" style="margin-top:15px; padding:15px; background:#f0f7ff; border-radius:8px; border:1px solid #cde4ff; display:none;"></div>
+                            </div>
+                            
+                            <div style="flex:1; min-width:300px; background:white; padding:25px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.05); border-top: 4px solid var(--primary);">
+                                <h3 style="margin-top:0; font-size:15px; color:var(--primary); text-transform:uppercase; letter-spacing:1px; margin-bottom:20px;">2. Vehicle & Service</h3>
+                                
+                                <div id="removeVehCont" style="display:none; margin-bottom:10px;">
+                                    <button type="button" class="btn btn-danger" style="width:100%; padding:8px; font-size:12px;" onclick="removeVehicle()">× Remove Selected Vehicle</button>
+                                </div>
+
+                                <label class="form-label">Select Vehicle</label>
+                                <select id="oVeh" onchange="handleVehicleChange(this.value)"><option value="">Select vehicle...</option></select>
+                                
+                                <label class="form-label">Vehicle Model (Optional)</label>
+                                <input type="text" id="oVehModel" placeholder="e.g. Volvo V90">
+                                
+                                <label class="form-label" style="margin-top:10px;">Select Wash Service</label>
+                                <input list="serviceOptions" id="oServ" placeholder="Select or type service..." oninput="updateServicePrice()" required>
+                                <datalist id="serviceOptions">
+                                    ${db.services.map(s => `<option value="${s.name}">${s.name} (${formatSEK(s.price)} exkl. moms)</option>`).join('')}
+                                </datalist>
+                            </div>
+
+                            <div style="flex:1; min-width:250px; background:#f8f9fa; padding:25px; border-radius:12px; border:2px solid var(--accent); box-shadow:0 4px 15px rgba(0,0,0,0.05);">
+                                <h3 style="margin-top:0; font-size:15px; color:var(--primary); text-transform:uppercase; letter-spacing:1px; margin-bottom:20px;">3. Financial Summary</h3>
+                                
+                                <div id="subNoticeBox" style="display:none; margin-bottom:15px; padding:10px; background:#d4edda; border:1px solid #c3e6cb; color:#155724; border-radius:6px; font-size:12px; font-weight:bold;">
+                                    👑 Active Subscription Verified! Price locked at 0 SEK. Direct payment/billing is disabled for this active vehicle plan.
+                                </div>
+                                <div id="subExpiredNoticeBox" style="display:none; margin-bottom:15px; padding:10px; background:#f8d7da; border:1px solid #f5c6cb; color:#721c24; border-radius:6px; font-size:12px; font-weight:bold;">
+                                    ⚠️ No Active Subscription found for this vehicle. Normal pricing parameters loaded.
+                                </div>
+
+                                <label class="form-label">Unit Price (Exkl. Moms)</label>
+                                <input type="number" id="oPrice" placeholder="A-pris" step="0.01" oninput="updateServiceVAT()" style="font-weight:bold; font-size:16px;" required>
+                                
+                                <label class="form-label">Calculated VAT (25%)</label>
+                                <input type="text" id="oVat" placeholder="Moms Amount" style="background:#eef2f5;" disabled>
+                                
+                                <label class="form-label">Total to Pay (Inkl. Moms)</label>
+                                <input type="text" id="oTotal" placeholder="Grand Total" style="background:#eef2f5; font-weight:bold; color:var(--success); font-size:16px;" disabled>
+                                
+                                <label class="form-label" style="margin-top:15px;">Payment Status</label>
+                                <select id="oPay" style="border:2px solid #bdc3c7; font-weight:bold;">
+                                    <option value="paid">✅ Paid (Cash/Card/Swish)</option>
+                                    <option value="credit">❌ Unpaid / Add to Credit Account</option>
+                                </select>
+                                
+                                <button type="submit" id="oSubmitBtn" class="btn btn-success" style="width:100%; margin-top:20px; font-size:16px; padding:15px;">Finalize Order & Print</button>
+                            </div>
+
+                        </div>
+                    </form>`;
+            }
+            else if (section === 'subscriptions') {
+                let totalSubscribers = 0;
+                let activeSubscribers = 0;
+                db.customers.forEach(c => {
+                    if(c.subscriptionsList && c.subscriptionsList.length) {
+                        totalSubscribers += c.subscriptionsList.length;
+                        c.subscriptionsList.forEach(s => {
+                            if(s.active && new Date() <= new Date(s.expiryDate)) activeSubscribers++;
+                        });
+                    }
+                });
+                let expiredSubscribers = totalSubscribers - activeSubscribers;
+                
+                const subPayments = db.orders.filter(o => o.isSubscriptionPayment);
+                const monthlyRevenue = subPayments.reduce((sum, o) => sum + o.amount, 0);
+                const renewalsCount = subPayments.filter(o => o.detail.includes("Renewal")).length;
+                
+                let cancelledCount = 0;
+                db.customers.forEach(c => {
+                    if(c.subscriptionsList) {
+                        cancelledCount += c.subscriptionsList.filter(s => s.cancelled).length;
+                    }
+                });
+
+                app.innerHTML = sessionHeader + `
+                    <h1>👑 Subscriptions Management</h1>
+                    
+                    <div class="report-grid">
+                        <div class="stat-item" style="border-top-color: var(--sub-color)">
+                            <h4>Total Subscriptions</h4>
+                            <p>${totalSubscribers}</p>
+                        </div>
+                        <div class="stat-item" style="border-top-color: var(--success)">
+                            <h4>Active Subscriptions</h4>
+                            <p>${activeSubscribers}</p>
+                        </div>
+                        <div class="stat-item" style="border-top-color: var(--danger)">
+                            <h4>Expired Subscriptions</h4>
+                            <p>${expiredSubscribers}</p>
+                        </div>
+                        <div class="stat-item" style="border-top-color: var(--warning)">
+                            <h4>Total Sub Revenue</h4>
+                            <p>${formatSEK(monthlyRevenue)}</p>
+                        </div>
+                    </div>
+                    <div class="report-grid" style="grid-template-columns: repeat(3, 1fr);">
+                        <div class="stat-item">
+                            <h4>Payments Count</h4>
+                            <p>${subPayments.length}</p>
+                        </div>
+                        <div class="stat-item" style="border-top-color: #00cec9;">
+                            <h4>Renewals</h4>
+                            <p>${renewalsCount}</p>
+                        </div>
+                        <div class="stat-item" style="border-top-color: #d63031;">
+                            <h4>Cancelled</h4>
+                            <p>${cancelledCount}</p>
+                        </div>
+                    </div>
+
                     <div class="card">
-                        <form onsubmit="event.preventDefault(); processOrder()">
-                            <input type="text" id="oPhone" placeholder="Customer Phone" oninput="loadVehicles(this.value)">
-                            <select id="oVeh" onchange="handleVehicleChange(this.value)"><option value="">Enter phone...</option></select>
-                            <select id="oServ">${db.services.map(s => `<option value="${s.id}">${s.name} ($${s.price})</option>`).join('')}</select>
-                            <select id="oPay"><option value="paid">Paid</option><option value="credit">Credit</option></select>
-                            <button class="btn btn-success" style="width:100%">Process & Show Invoice</button>
-                        </form>
-                    </div>`;
+                        <h3>Customer Vehicle Subscription Upgrade Matrix</h3>
+                        <label class="form-label">Select Target Customer</label>
+                        <select id="subCustomerSelector" onchange="loadCustomerSubscriptionPanel(this.value)" style="border: 2px solid var(--sub-color);">
+                            <option value="">-- Choose Customer --</option>
+                            ${db.customers.map(c => `<option value="${c.id}">${c.name} (${c.phone})</option>`).join('')}
+                        </select>
+                        
+                        <div id="customerSubscriptionView" style="margin-top: 20px;"></div>
+                    </div>
+                `;
             }
             else if (section === 'reports') {
-                const filteredOrders = db.orders.filter(o => o.name.toLowerCase().includes(db.historySearch) || o.phone.includes(db.historySearch) || o.detail.toLowerCase().includes(db.historySearch));
-                app.innerHTML = `<h1>History & Reports</h1>
-                    <div class="pdf-panel"><h3>Export PDF Statement</h3>
-                        <div style="display:flex; gap:10px;"><select id="pdfCustomer" style="flex:2"><option value="">Whole Business</option>${db.customers.map(c => `<option value="${c.phone}">${c.name}</option>`).join('')}</select>
-                        <select id="pdfTime" style="flex:1"><option value="Daily">Daily</option><option value="Weekly">Weekly</option><option value="Monthly">Monthly</option></select>
-                        <button class="btn btn-pdf" onclick="generatePDFReport(document.getElementById('pdfTime').value, document.getElementById('pdfCustomer').value)">Download</button></div></div>
+                const filteredOrders = db.orders.filter(o => {
+                    const matchesSearch = o.name.toLowerCase().includes(db.historySearch) || o.phone.includes(db.historySearch);
+                    const matchesStatus = db.filterStatus === 'all' || o.method === db.filterStatus;
+                    const orderDate = new Date(o.date);
+                    const matchesFrom = !db.filterFrom || orderDate >= new Date(db.filterFrom);
+                    let matchesTo = true;
+                    if (db.filterTo) {
+                        let toDate = new Date(db.filterTo);
+                        toDate.setHours(23,59,59,999);
+                        matchesTo = orderDate <= toDate;
+                    }
+                    return matchesSearch && matchesStatus && matchesFrom && matchesTo;
+                });
+                
+                const totalAmt = filteredOrders.reduce((s, o) => s + (o.isAdjustment ? 0 : o.amount), 0);
+                
+                app.innerHTML = sessionHeader + `<h1>${t('rep')}</h1>
+                    
+                    <div class="card" style="background:#fdfdfd; border-left: 4px solid var(--accent); padding-bottom: 15px;">
+                        <h3 style="margin-top:0; font-size:15px; color:var(--primary); text-transform:uppercase;">Data Filtering</h3>
+                        <div style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap;">
+                            <div style="flex:2; min-width:200px;">
+                                <label class="form-label">Search Client</label>
+                                <input type="text" placeholder="Name or Phone..." style="margin-bottom:0;" oninput="db.historySearch = this.value.toLowerCase(); render('reports')" value="${db.historySearch}">
+                            </div>
+                            <div style="flex:1; min-width:120px;">
+                                <label class="form-label">Status</label>
+                                <select style="margin-bottom:0;" onchange="db.filterStatus = this.value; render('reports')">
+                                    <option value="all" ${db.filterStatus==='all'?'selected':''}>All</option>
+                                    <option value="paid" ${db.filterStatus==='paid'?'selected':''}>Paid Only</option>
+                                    <option value="credit" ${db.filterStatus==='credit'?'selected':''}>Credit / Unpaid</option>
+                                </select>
+                            </div>
+                            <div style="flex:1; min-width:130px;">
+                                <label class="form-label">From Date</label>
+                                <input type="date" style="margin-bottom:0;" onchange="db.filterFrom = this.value; render('reports')" value="${db.filterFrom}">
+                            </div>
+                            <div style="flex:1; min-width:130px;">
+                                <label class="form-label">To Date</label>
+                                <input type="date" style="margin-bottom:0;" onchange="db.filterTo = this.value; render('reports')" value="${db.filterTo}">
+                            </div>
+                            <div>
+                                <button class="btn" style="background:#95a5a6; height:42px; padding:0 20px;" onclick="db.historySearch=''; db.filterStatus='all'; db.filterFrom=''; db.filterTo=''; render('reports')">Clear</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="margin-bottom:15px;">
+                        <h3 style="margin-top:0; font-size:15px; color:var(--primary); text-transform:uppercase;">Export PDF Statement</h3>
+                        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                            <select id="pdfCustomer" style="flex:2; min-width:200px;"><option value="">Whole Business (All Clients)</option>${db.customers.map(c => `<option value="${c.phone}">${c.name} (${c.type})</option>`).join('')}</select>
+                            <select id="pdfTime" style="flex:1; min-width:120px;"><option value="Daily">Daily Summary</option><option value="Weekly">Weekly Summary</option><option value="Monthly">Monthly Summary</option></select>
+                            <button class="btn btn-pdf" style="background:var(--danger); min-width:160px;" onclick="generatePDFReport(document.getElementById('pdfTime').value, document.getElementById('pdfCustomer').value)">Download PDF Report</button>
+                        </div>
+                    </div>
+
                     <div class="card">
-                        <input type="text" placeholder="🔍 Search History..." oninput="db.historySearch = this.value.toLowerCase(); render('reports')" value="${db.historySearch}">
-                        <table><thead><tr><th>Date</th><th>Customer</th><th>Detail</th><th>Amount</th><th>Method</th></tr></thead>
-                        <tbody>${filteredOrders.map(o => `<tr><td>${new Date(o.date).toLocaleDateString()}</td><td>${o.name}</td><td>${o.detail}</td><td>$${o.amount.toFixed(2)}</td><td class="clickable-status" style="color:${o.method==='credit'?'red':'green'}" onclick="showInvoice(${o.id})">${o.method}</td></tr>`).join('')}</tbody>
-                        </table></div>`;
+                        <div class="table-responsive-container"><table><thead><tr><th>Date</th><th>Customer</th><th>Detail</th><th>Staff</th><th>Amount</th><th>Method</th><th>Action</th></tr></thead>
+                        <tbody>${filteredOrders.map(o => `<tr>
+                            <td>${new Date(o.date).toLocaleDateString()}</td>
+                            <td>${o.name}</td>
+                            <td>${o.isAdjustment ? `<span style="color:var(--success);font-weight:bold;">Account Payment</span>` : o.detail}</td>
+                            <td><small>${o.staff || 'System'}</small></td>
+                            <td style="${o.isAdjustment ? 'color:var(--success)' : ''}">${o.isAdjustment ? '-' : ''}${formatSEK(o.amount)}</td>
+                            <td style="color:${o.method==='credit'?'red':'green'}; cursor:pointer; font-weight:bold;" onclick="showInvoice(${o.id})">${o.method.toUpperCase()}</td>
+                            <td>
+                            ${currentUser.permissions?.canDelete ? `<button class="btn btn-danger" style="padding: 4px 8px; font-size: 11px;" onclick="deleteOrderData(${o.id})">${t('del')}</button>` : '-'}
+                            </td>
+                        </tr>`).join('')}</tbody>
+                        <tfoot style="background:#f9f9f9; font-weight:bold; border-top:2px solid #ddd;">
+                            <tr><td colspan="4" style="text-align:right">Search Filtered Revenue (Excluding Debt Payments):</td><td colspan="3" style="font-size:16px;">${formatSEK(totalAmt)}</td></tr>
+                        </tfoot>
+                        </table></div>
+                    </div>`;
+            }
+            else if (section === 'users') {
+                if (currentUser.role !== 'Admin') return alert("Admin Access Required");
+                
+                app.innerHTML = sessionHeader + `<h1>${t('usr')} & Control</h1>
+                    <div style="display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap;">
+                        <button class="btn btn-success" onclick="openUserModal()">+ Create New Staff</button>
+                        <button class="btn" style="background:var(--bank);" onclick="openRecycleBinModal()">♻ View Recycle Bin</button>
+                        <button class="btn btn-danger" onclick="openPurgeDataModal()">⚙ System Cleanup Tool</button>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>Active System Accounts & Permissions</h3>
+                        <div class="table-responsive-container"><table><thead><tr><th>Name (Username)</th><th>Role</th><th>Status</th><th>Special Privileges / Permissions</th><th>Action</th></tr></thead>
+                        <tbody>${db.users.map(u => {
+                            const p = u.permissions || { canDelete: u.role==='Admin', canRestore: u.role==='Admin', canClearLogs: u.role==='Admin', canEditSettings: u.role==='Admin' };
+                            return `<tr>
+                                <td><b>${u.name}</b> (${u.user})</td>
+                                <td><span style="background: ${u.role === 'Admin' ? 'var(--primary)' : '#95a5a6'}; color: white; padding: 2px 6px; border-radius: 4px; font-size: 11px;">${u.role}</span></td>
+                                <td><b style="color: ${u.status === 'Active' ? 'var(--success)' : 'var(--danger)'}">${u.status}</b></td>
+                                <td>
+                                    ${p.canDelete ? '<span class="perm-badge">Can Delete</span>' : ''}
+                                    ${p.canRestore ? '<span class="perm-badge">Can Restore</span>' : ''}
+                                    ${p.canClearLogs ? '<span class="perm-badge">Purge Logs</span>' : ''}
+                                    ${p.canEditSettings ? '<span class="perm-badge">Settings Master</span>' : ''}
+                                    ${!p.canDelete && !p.canRestore && !p.canClearLogs && !p.canEditSettings ? '<span style="color:#bdc3c7; font-size:12px;">Standard Frontdesk Only</span>' : ''}
+                                </td>
+                                <td>
+                                    <button class="btn btn-warning" style="padding: 4px 8px; font-size: 12px;" onclick="openUserModal(${u.id})">Configure</button>
+                                </td>
+                            </tr>`;
+                        }).join('')}</tbody></table></div>
+                    </div>
+                    
+                    <div class="card">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <h3>Activity Logs & Audits</h3>
+                            ${currentUser.permissions?.canClearLogs ? `<button class="btn btn-danger" style="padding:4px 10px; font-size:11px;" onclick="clearSystemActivityLogs()">Wipe Log Indexes</button>` : ''}
+                        </div>
+                        <div style="font-size:11px; max-height:220px; overflow:auto; background:#1e272e; color:#f5f6fa; padding:15px; border-radius:8px; font-family:monospace; margin-top:10px;">
+                            ${db.activityLog.length ? db.activityLog.map(l => `<div><span style="color:var(--accent)">[${l.time}]</span> <b style="color:var(--warning)">${l.actor}</b>: <span style="color:var(--success)">${l.action}</span> - ${l.details}</div>`).join('') : '<div style="color:#7f8c8d; text-align:center;">No logs stored.</div>'}
+                        </div>
+                    </div>`;
             }
         }
 
-        function setOrderType(type) { db.currentOrderType = type; save(); render('orders'); }
-        
-        function openPaymentCalc(custId) {
-            const customer = db.customers.find(c => c.id === custId);
-            const content = document.getElementById('modalContent');
-            content.innerHTML = `
-                <div class="calc-header"><h2>${customer.name}</h2><p>Current Debt: $${customer.balance.toFixed(2)}</p></div>
-                <input type="number" id="pAmt" placeholder="Amount to Pay/Adjust" step="0.01">
-                <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:5px; margin-bottom:10px;">
-                    <button class="btn btn-success" onclick="adjustBalance(${customer.id}, 'subtract', 'Cash')">Cash</button>
-                    <button class="btn" style="background:var(--bank)" onclick="adjustBalance(${customer.id}, 'subtract', 'Bank')">Bank</button>
-                    <button class="btn" style="background:var(--swish); color:black" onclick="adjustBalance(${customer.id}, 'subtract', 'Swish')">Swish</button>
+        function loadCustomerSubscriptionPanel(custId) {
+            const container = document.getElementById('customerSubscriptionView');
+            if(!custId) { container.innerHTML = ""; return; }
+            
+            const customer = db.customers.find(c => c.id === parseInt(custId));
+            const washesUsed = getWashesUsedThisMonth(customer.phone);
+            
+            let vehiclesHtml = customer.vehicles.map(v => {
+                const plate = getVehiclePlate(v);
+                const subInfo = getVehicleSubscriptionStatus(customer, plate);
+                const badgeClass = subInfo.isActive ? 'sub-active' : 'sub-expired';
+                
+                return `
+                    <div style="border: 1px solid #ddd; padding: 15px; border-radius: 8px; margin-bottom: 15px; background: white;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <strong>🚗 Vehicle: ${getVehicleDisplay(v)}</strong>
+                            <span class="sub-badge ${badgeClass}">${subInfo.status}</span>
+                        </div>
+                        <div style="font-size: 13px; margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div><b>Plan Name:</b> ${subInfo.isActive ? subInfo.planName : 'None'}</div>
+                            <div><b>Days Remaining:</b> ${subInfo.daysRemaining} days</div>
+                            <div><b>Start Date:</b> ${subInfo.isActive ? new Date(subInfo.startDate).toLocaleDateString() : 'N/A'}</div>
+                            <div><b>Expiry Date:</b> ${subInfo.isActive ? new Date(subInfo.expiryDate).toLocaleDateString() : 'N/A'}</div>
+                        </div>
+                        ${subInfo.isActive ? `
+                            <div style="margin-top: 10px; text-align: right;">
+                                <button class="btn btn-danger" style="padding: 4px 10px; font-size: 11px;" onclick="deactivateVehicleSubscription(${customer.id}, '${plate}')">Deactivate Subscription</button>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = `
+                <div style="border: 2px dashed var(--sub-color); padding:20px; border-radius:8px; margin-top:15px; background: #faf9ff;">
+                    <h3 style="margin-top:0;">Customer Account Plan: ${customer.name}</h3>
+                    <p>Washes Used This Month: <strong>${washesUsed}</strong> | Unlimited Remaining: <strong>∞</strong></p>
+                    
+                    <div style="margin: 15px 0;">
+                        <h4>Per Car Active Registries</h4>
+                        ${vehiclesHtml || '<p style="color:#7f8c8d;">No registered vehicles for this customer profile.</p>'}
+                    </div>
+
+                    <div class="card" style="background:#f1f2f6; border-left: 4px solid var(--sub-color);">
+                        <h4>Upgrade/Renew Subscription Plan Engine</h4>
+                        <label class="form-label">Scope Target Selection</label>
+                        <select id="subScopeTarget" onchange="calculateSubscriptionTotalCost(${customer.id})">
+                            <option value="ALL_CARS">All Cars Registered (Total: ${customer.vehicles.length} cars)</option>
+                            ${customer.vehicles.map(v => `<option value="${getVehiclePlate(v)}">Only Single Car: ${getVehiclePlate(v)}</option>`).join('')}
+                        </select>
+                        
+                        <label class="form-label">Billing Payment Modality Alternative</label>
+                        <select id="subBillingAlternative">
+                            <option value="paid">✅ Direct Payment (Paid Cash/Card/Swish)</option>
+                            <option value="credit">❌ Add to Customer Credit Debt Invoice</option>
+                        </select>
+
+                        <div style="margin: 15px 0; font-size: 16px; font-weight: bold; color: var(--primary);">
+                            Calculated Price: <span id="subTotalCostLabel" style="color:var(--sub-color);">0.00 kr</span>
+                        </div>
+
+                        <button class="btn btn-sub" style="width: 100%;" onclick="executeSubscriptionUpgrade(${customer.id})">Finalize & Process Subscription Plan Upgrade</button>
+                    </div>
                 </div>
-                <button class="btn btn-danger" style="width:100%" onclick="adjustBalance(${customer.id}, 'add', 'Manual Adjustment')">+ Add Debt Adjustment</button>
+            `;
+            calculateSubscriptionTotalCost(customer.id);
+        }
+
+        function calculateSubscriptionTotalCost(custId) {
+            const customer = db.customers.find(c => c.id === custId);
+            const targetScope = document.getElementById('subScopeTarget').value;
+            
+            let targets = [];
+            if(targetScope === 'ALL_CARS') {
+                targets = customer.vehicles.map(v => getVehiclePlate(v));
+            } else {
+                targets = [targetScope];
+            }
+
+            // Exclude already active cars from calculation/charge scope
+            let nonActiveTargetsCount = 0;
+            targets.forEach(plate => {
+                const status = getVehicleSubscriptionStatus(customer, plate);
+                if(!status.isActive) nonActiveTargetsCount++;
+            });
+
+            const total = nonActiveTargetsCount * 899;
+            document.getElementById('subTotalCostLabel').innerText = formatSEK(total) + ` (${nonActiveTargetsCount} chargeable cars)`;
+        }
+
+        function executeSubscriptionUpgrade(custId) {
+            const customer = db.customers.find(c => c.id === custId);
+            const targetScope = document.getElementById('subScopeTarget').value;
+            const billingAlternative = document.getElementById('subBillingAlternative').value;
+            
+            let initialTargets = [];
+            if(targetScope === 'ALL_CARS') {
+                initialTargets = customer.vehicles.map(v => getVehiclePlate(v));
+            } else {
+                initialTargets = [targetScope];
+            }
+
+            // Filter out cars that already have active subscriptions
+            let targets = initialTargets.filter(plate => {
+                const subInfo = getVehicleSubscriptionStatus(customer, plate);
+                return !subInfo.isActive;
+            });
+
+            if(targets.length === 0) {
+                return alert("Security Block: Selected vehicle(s) already have an active subscription! Re-subscription is blocked unless deactivated.");
+            }
+
+            if(!confirm(`Proceed charging ${formatSEK(targets.length * 899)} for ${targets.length} car/s utilizing [${billingAlternative.toUpperCase()}] status?`)) return;
+
+            if(!customer.subscriptionsList) customer.subscriptionsList = [];
+
+            const startDate = new Date();
+            const expiryDate = new Date();
+            expiryDate.setDate(expiryDate.getDate() + 30);
+
+            targets.forEach(plate => {
+                customer.subscriptionsList.push({
+                    plate: plate,
+                    planName: "Unlimited Wash Plan",
+                    active: true,
+                    startDate: startDate.toISOString(),
+                    expiryDate: expiryDate.toISOString(),
+                    cancelled: false
+                });
+            });
+
+            const totalChargedAmount = targets.length * 899;
+            const preVat = totalChargedAmount / 1.25;
+            const vatAmount = totalChargedAmount - preVat;
+
+            if(billingAlternative === 'credit') {
+                customer.balance = (customer.balance || 0) + totalChargedAmount;
+            }
+
+            const orderId = Date.now();
+            db.orders.unshift({
+                id: orderId,
+                phone: customer.phone,
+                name: customer.name,
+                vehicle: `Plates upgraded: ${targets.join(', ')}`,
+                detail: `Subscription Upgrade - Unlimited Wash Plan (${targets.length} car/s)`,
+                amount: totalChargedAmount,
+                baseAmount: parseFloat(preVat.toFixed(2)),
+                preVat: parseFloat(preVat.toFixed(2)),
+                vatAmount: parseFloat(vatAmount.toFixed(2)),
+                method: billingAlternative,
+                date: new Date().toISOString(),
+                isSubscriptionPayment: true,
+                staff: currentUser.name
+            });
+
+            logActivity('SUB_UPGRADE', `Charged ${formatSEK(totalChargedAmount)} via ${billingAlternative} for ${customer.name}`);
+            save();
+            alert("Subscription registry completed successfully!");
+            loadCustomerSubscriptionPanel(custId);
+        }
+
+        function deactivateVehicleSubscription(custId, plateStr) {
+            if(!confirm(`Are you sure you want to completely deactivate the subscription for vehicle ${plateStr} immediately?`)) return;
+            const customer = db.customers.find(c => c.id === custId);
+            if(customer && customer.subscriptionsList) {
+                const normPlate = normalizePlate(plateStr);
+                customer.subscriptionsList.forEach(s => {
+                    if(normalizePlate(s.plate) === normPlate) {
+                        s.active = false;
+                        s.cancelled = true;
+                    }
+                });
+                logActivity('SUB_DEACTIVATE', `Manually deactivated subscription for car ${plateStr} of customer ${customer.name}`);
+                save();
+                alert("Subscription deactivated. Normal billing and booking features are now restored for this vehicle.");
+                loadCustomerSubscriptionPanel(custId);
+            }
+        }
+
+        function deleteCustomerData(id) {
+            if (!currentUser.permissions?.canDelete) return alert("Permission Denied: You do not have delete rights.");
+            if (!confirm("Are you sure you want to completely delete this customer? This will move them to the recycle bin.")) return;
+            const targetIndex = db.customers.findIndex(c => c.id === id);
+            if (targetIndex > -1) {
+                const item = db.customers.splice(targetIndex, 1)[0];
+                db.recycleBin.customers.push({ deletedAt: new Date().toLocaleString(), data: item });
+                logActivity('DELETE_CUSTOMER', `Moved customer ${item.name} to Recycle Bin`);
+                save();
+                render('customers');
+            }
+        }
+
+        function deleteOrderData(id) {
+            if (!currentUser.permissions?.canDelete) return alert("Permission Denied: You do not have delete rights.");
+            if (!confirm("Are you sure you want to completely delete this order? This will move it to the recycle bin.")) return;
+            const targetIndex = db.orders.findIndex(o => o.id === id);
+            if (targetIndex > -1) {
+                const item = db.orders.splice(targetIndex, 1)[0];
+                
+                if (item.method === 'credit') {
+                    const customer = db.customers.find(c => c.phone === item.phone);
+                    if (customer) {
+                        customer.balance = (customer.balance || 0) - item.amount;
+                    }
+                }
+                
+                db.recycleBin.orders.push({ deletedAt: new Date().toLocaleString(), data: item });
+                logActivity('DELETE_ORDER', `Moved order ref #${id} to Recycle Bin`);
+                save();
+                render('reports');
+            }
+        }
+
+        function openRecycleBinModal() {
+            let customerRows = db.recycleBin.customers.map((wrapper, index) => `
+                <tr>
+                    <td>Customer Profile</td>
+                    <td><b>${wrapper.data.name}</b> (${wrapper.data.phone})</td>
+                    <td>${wrapper.deletedAt}</td>
+                    <td><button class="btn btn-success" style="padding:2px 6px; font-size:11px;" onclick="restoreItem('customers', ${index})">Restore</button></td>
+                </tr>`).join('');
+
+            let orderRows = db.recycleBin.orders.map((wrapper, index) => `
+                <tr>
+                    <td>Order Receipt</td>
+                    <td><b>${wrapper.data.name}</b> - ${wrapper.data.detail} (${formatSEK(wrapper.data.amount)})</td>
+                    <td>${wrapper.deletedAt}</td>
+                    <td><button class="btn btn-success" style="padding:2px 6px; font-size:11px;" onclick="restoreItem('orders', ${index})">Restore</button></td>
+                </tr>`).join('');
+
+            let userRows = db.recycleBin.users ? db.recycleBin.users.map((wrapper, index) => `
+                <tr>
+                    <td>User Account</td>
+                    <td><b>${wrapper.data.name}</b> (${wrapper.data.user})</td>
+                    <td>${wrapper.deletedAt}</td>
+                    <td><button class="btn btn-success" style="padding:2px 6px; font-size:11px;" onclick="restoreItem('users', ${index})">Restore</button></td>
+                </tr>`).join('') : '';
+
+            document.getElementById('modalContent').innerHTML = `
+                <h2>♻ System Recycle Bin & Rollback Storage</h2>
+                <div style="max-height:50vh; overflow-y:auto; margin-top:15px; border:1px solid #ddd; border-radius:6px;">
+                    <div class="table-responsive-container"><table>
+                        <thead>
+                            <tr style="background:#f1f2f6;">
+                                <th>Category</th>
+                                <th>Details</th>
+                                <th>Deleted</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${customerRows || orderRows || userRows ? customerRows + orderRows + userRows : '<tr><td colspan="4" style="text-align:center; padding:20px; color:#95a5a6;">Recycle Bin is empty!</td></tr>'}
+                        </tbody>
+                    </table></div>
+                </div>
+                <div style="margin-top:15px; display:flex; gap:10px;">
+                    <button class="btn btn-danger" style="flex:1;" onclick="emptyAllRecycleBin()">Empty Storage</button>
+                    <button class="btn" style="flex:1; background:#95a5a6;" onclick="closeModal()">Close</button>
+                </div>`;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        function restoreItem(type, index) {
+            if (!currentUser.permissions?.canRestore) return alert("Access Denied: Your staff profile lacks restoration privileges.");
+            if (!confirm("Are you sure you want to restore this item from the recycle bin?")) return;
+            
+            const wrapper = db.recycleBin[type].splice(index, 1)[0];
+            if (type === 'orders' && wrapper.data.method === 'credit') {
+                const customer = db.customers.find(c => c.phone === wrapper.data.phone);
+                if (customer) customer.balance = (customer.balance || 0) + wrapper.data.amount;
+            }
+            db[type].unshift(wrapper.data);
+            logActivity('RESTORE_DATA', `Restored ${type} asset info belonging to: ${wrapper.data.name}`);
+            save();
+            closeModal();
+            render('users');
+        }
+
+        function emptyAllRecycleBin() {
+            if (!confirm("Are you entirely sure you want to permanently delete all items from the recycle bin? This cannot be undone!")) return;
+            db.recycleBin = { customers: [], orders: [], users: [] };
+            logActivity('PURGE_TRASH', "Permanently wiped recycle bin contents");
+            save();
+            closeModal();
+            render('users');
+        }
+
+        function openPurgeDataModal() {
+            if (!currentUser.permissions?.canClearLogs) return alert("Access Denied: Administrative system clean authorization required.");
+            document.getElementById('modalContent').innerHTML = `
+                <h2>⚙ System Database Maintenance & Clean-up</h2>
+                <div class="card" style="border: 1px solid #fab1a0; background:#fffbfb; margin-top:15px; padding:15px;">
+                    <h4>Option 1: Clean/Purge Old Datasets</h4>
+                    <select id="purgeRange" style="margin-bottom:10px;">
+                        <option value="30">Delete orders older than 30 Days</option>
+                        <option value="90">Delete orders older than 90 Days</option>
+                        <option value="180">Delete orders older than 180 Days</option>
+                    </select>
+                    <button class="btn btn-warning" style="width:100%; font-size:13px;" onclick="purgeOldOrdersHistory()">Execute History Optimization Purge</button>
+                </div>
+
+                <div class="card" style="border: 1px solid #ff7675; background:#fff5f5; padding:15px;">
+                    <h4>Option 2: Absolute Clear-Out / Factory Reset</h4>
+                    <button class="btn btn-danger" style="width:100%; font-size:13px;" onclick="executeAbsoluteFactoryReset()">Wipe Everything & Reset Database Fresh</button>
+                </div>
+                <button class="btn" style="width:100%; background:#95a5a6; margin-top:5px;" onclick="closeModal()">Exit Utility</button>`;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        function purgeOldOrdersHistory() {
+            const days = parseInt(document.getElementById('purgeRange').value);
+            if (!confirm(`Are you absolutely sure you want to permanently delete all order records older than ${days} days?`)) return;
+            
+            const cutoffDate = new Date();
+            cutoffDate.setDate(cutoffDate.getDate() - days);
+            
+            const initialCount = db.orders.length;
+            db.orders = db.orders.filter(o => new Date(o.date) >= cutoffDate);
+            const deletedCount = initialCount - db.orders.length;
+            
+            logActivity('PURGE_OLD_RECORDS', `Cleaned out ${deletedCount} operational order forms older than ${days} days.`);
+            save();
+            alert(`Optimization complete. Safely purged ${deletedCount} archived logs receipts items.`);
+            closeModal();
+            render('users');
+        }
+
+        function executeAbsoluteFactoryReset() {
+            if (!confirm("CRITICAL WARNING: This will eliminate ALL registered clients, cars records, payment logs tables entirely. Keep active user list metadata?")) return;
+            if (prompt("Type 'CONFIRM RESET' to complete data clearout process:") !== "CONFIRM RESET") return alert("Reset canceled.");
+            
+            db.customers = [];
+            db.orders = [];
+            db.activityLog = [];
+            db.recycleBin = { customers: [], orders: [], users: [] };
+            db.searchTerm = "";
+            db.historySearch = "";
+            
+            logActivity('FACTORY_RESET', "Executed absolute factory wipe across variables tables engines.");
+            save();
+            alert("Database table arrays initialized cleanly. System ready for brand new season processing.");
+            location.reload();
+        }
+
+        function clearSystemActivityLogs() {
+            if (!confirm("Are you sure you want to completely wipe all system activity logs?")) return;
+            db.activityLog = [];
+            logActivity('RESET_LOGS', "Cleared core activity monitor rows");
+            save();
+            render('users');
+        }
+
+        function openRegModal(id = null) {
+            const c = id ? db.customers.find(x => x.id === id) : { name:'', company:'', phone:'', pNum:'', email:'', vehicles:[{ plate:'', model:'' }], address:'', region:'', note:'', type:'Private' };
+            const firstRaw = c.vehicles && c.vehicles.length ? c.vehicles[0] : { plate:'', model:'' };
+            const firstVehicle = typeof firstRaw === 'string' ? { plate: firstRaw, model: '' } : firstRaw;
+            document.getElementById('modalContent').innerHTML = `
+                <h2>${id ? 'Update Professional Details' : 'New Customer Registration'}</h2>
+                <form id="regForm" onsubmit="event.preventDefault(); saveCustomerProfile(${id});">
+                    <label class="form-label">ACCOUNT TYPE</label>
+                    <select id="regType" onchange="toggleRegLabels(this.value)">
+                        <option value="Private" ${c.type === 'Private' ? 'selected' : ''}>Private Person</option>
+                        <option value="Company" ${c.type === 'Company' ? 'selected' : ''}>Company / Business</option>
+                    </select>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                        <div>
+                            <label class="form-label">Full Name</label>
+                            <input type="text" id="regName" placeholder="Full Name" value="${c.name}" required>
+                        </div>
+                        <div>
+                            <label class="form-label">Company Name</label>
+                            <input type="text" id="regCompany" placeholder="Company Name (Optional)" value="${c.company || ''}">
+                        </div>
+                    </div>
+                    
+                    <label class="form-label">Phone Number</label>
+                    <input type="text" id="regPhone" placeholder="Phone Number" value="${c.phone}" required>
+                    
+                    <label class="form-label" id="lblPNum">${c.type === 'Company' ? 'Organization Number' : 'Personal Number'}</label>
+                    <input type="text" id="regPNum" placeholder="${c.type === 'Company' ? 'Organization Number' : 'YYYYMMDD-XXXX'}" value="${c.pNum || ''}" required>
+                    
+                    <label class="form-label">Email</label>
+                    <input type="email" id="regEmail" placeholder="Email (Optional)" value="${c.email || ''}">
+                    
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                        <div>
+                            <label class="form-label">Primary Vehicle Plate</label>
+                            <input type="text" id="regVeh" placeholder="Registration Nr" value="${firstVehicle.plate}" ${id ? 'disabled' : 'required'}>
+                        </div>
+                        <div>
+                            <label class="form-label">Vehicle Model</label>
+                            <input type="text" id="regVehModel" placeholder="e.g. Volvo V90" value="${firstVehicle.model || ''}" ${id ? '' : 'required'}>
+                        </div>
+                    </div>
+                    <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
+                    <label class="form-label">LOCATION ADDRESS</label>
+                    <input type="text" id="regAddr" placeholder="Street Address" value="${c.address || ''}">
+                    <select id="regRegion">
+                        <option value="">Select Region</option>
+                        ${swedenRegions.map(r => `<option value="${r}" ${c.region === r ? 'selected' : ''}>${r}</option>`).join('')}
+                    </select>
+                    <label class="form-label">STAFF NOTES</label>
+                    <textarea id="regNote" placeholder="Internal notes" rows="2">${c.note || ''}</textarea>
+                    <div id="regError" style="color:var(--danger); font-size:12px; margin-bottom:10px; display:none;"></div>
+                    <button class="btn btn-success" style="width:100%">${id ? 'Update Database' : 'Register Customer'}</button>
+                    <button type="button" class="btn" style="width:100%; margin-top:10px; background:#95a5a6" onclick="closeModal()">Cancel</button>
+                </form>`;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        function toggleRegLabels(val) {
+            document.getElementById('regPNum').placeholder = (val === 'Company') ? "Organization Number" : "Personal Number (YYYYMMDD-XXXX)";
+            document.getElementById('lblPNum').innerText = (val === 'Company') ? "Organization Number" : "Personal Number";
+        }
+
+        function saveCustomerProfile(id) {
+            if (!confirm("Are you sure you want to save this customer's profile?")) return;
+            const phone = document.getElementById('regPhone').value.trim();
+            const pnum = document.getElementById('regPNum').value.trim();
+            const errDiv = document.getElementById('regError');
+            
+            const duplicate = db.customers.find(c => 
+                c.id !== id && (c.phone === phone || (c.pNum && c.pNum === pnum))
+            );
+
+            if (duplicate) {
+                errDiv.style.display = 'block';
+                errDiv.innerText = "Error: A customer with this Phone or ID Number already exists.";
+                return;
+            }
+
+            const data = {
+                type: document.getElementById('regType').value,
+                name: document.getElementById('regName').value,
+                company: document.getElementById('regCompany').value,
+                phone: phone,
+                pNum: pnum,
+                email: document.getElementById('regEmail').value,
+                address: document.getElementById('regAddr').value,
+                region: document.getElementById('regRegion').value,
+                note: document.getElementById('regNote').value
+            };
+
+            const vehiclePlate = document.getElementById('regVeh').value.trim();
+            const vehicleModel = document.getElementById('regVehModel').value.trim();
+            if (id) {
+                const target = db.customers.find(x => x.id === id);
+                Object.assign(target, data);
+                if (!target.vehicles || !target.vehicles.length) {
+                    target.vehicles = [{ plate: vehiclePlate, model: vehicleModel }];
+                } else {
+                    if (typeof target.vehicles[0] === 'string') {
+                        target.vehicles = [{ plate: target.vehicles[0], model: vehicleModel }];
+                    } else {
+                        target.vehicles[0].model = vehicleModel || target.vehicles[0].model;
+                    }
+                }
+                logActivity('UPDATE_CUST', `Updated ${target.name}`);
+            } else {
+                const newC = { id: Date.now(), ...data, vehicles: [{ plate: vehiclePlate, model: vehicleModel }], balance: 0, subscriptionsList: [] };
+                db.customers.push(newC);
+                logActivity('CREATE_CUST', `Registered ${newC.name}`);
+            }
+            save(); closeModal(); render('customers');
+        }
+
+        function openVehicleRegistryModal() {
+            const rows = db.customers.flatMap(c => c.vehicles.map(v => ({
+                plate: getVehiclePlate(v),
+                model: getVehicleModel(v),
+                customer: c.company ? `${c.name} (${c.company})` : c.name,
+                custId: c.id
+            })));
+            document.getElementById('modalContent').innerHTML = `
+                <h2>Vehicle Registry & Transfer</h2>
+                <div style="max-height:60vh; overflow:auto; margin-top:15px;">
+                    <div class="table-responsive-container"><table><thead><tr><th>Vehicle Plate</th><th>Vehicle Model</th><th>Customer</th><th>Action</th></tr></thead>
+                    <tbody>
+                        ${rows.length ? rows.map(v => `<tr><td>${v.plate || 'N/A'}</td><td>${v.model || 'N/A'}</td><td>${v.customer}</td><td><button class="btn btn-warning" style="padding:4px 8px; font-size:11px;" onclick="openTransferVehicleModal('${v.plate}', ${v.custId})">Edit / Transfer</button></td></tr>`).join('') : '<tr><td colspan="4" style="text-align:center; padding:15px;">No registered vehicles found.</td></tr>'}
+                    </tbody></table></div>
+                </div>
+                <button class="btn" style="width:100%; margin-top:15px; background:#95a5a6" onclick="closeModal()">Close</button>`;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        function openTransferVehicleModal(plate, custId) {
+            const customer = db.customers.find(c => c.id === custId);
+            const vehicle = customer.vehicles.find(v => normalizePlate(getVehiclePlate(v)) === normalizePlate(plate));
+            const model = getVehicleModel(vehicle);
+
+            document.getElementById('modalContent').innerHTML = `
+                <h2>Edit / Transfer Vehicle</h2>
+                <p style="font-size:12px; color:#7f8c8d; margin-bottom:15px;">Edit the vehicle details or select a new customer/company to transfer ownership.</p>
+                <label class="form-label">Vehicle Plate</label>
+                <input type="text" id="tPlate" value="${plate}" required>
+                <label class="form-label">Vehicle Model</label>
+                <input type="text" id="tModel" value="${model}" placeholder="Vehicle Model">
+                <label class="form-label">Owner / Company</label>
+                <select id="tOwner">
+                    ${db.customers.map(c => `<option value="${c.id}" ${c.id === custId ? 'selected' : ''}>${c.name} ${c.company ? `(${c.company})` : ''}</option>`).join('')}
+                </select>
+                <button class="btn btn-success" style="width:100%; margin-top:15px;" onclick="saveVehicleTransfer('${plate}', ${custId})">Save Changes & Transfer</button>
+                <button class="btn" style="width:100%; margin-top:10px; background:#95a5a6" onclick="openVehicleRegistryModal()">Cancel</button>
+            `;
+        }
+
+        function saveVehicleTransfer(oldPlate, oldCustId) {
+            if (!confirm("Are you sure you want to save these vehicle changes?")) return;
+            const newPlate = document.getElementById('tPlate').value.trim();
+            const newModel = document.getElementById('tModel').value.trim();
+            const newCustId = parseInt(document.getElementById('tOwner').value);
+
+            if (!newPlate) return alert("Vehicle plate cannot be empty.");
+
+            const oldCustomer = db.customers.find(c => c.id === oldCustId);
+            const vIndex = oldCustomer.vehicles.findIndex(v => normalizePlate(getVehiclePlate(v)) === normalizePlate(oldPlate));
+            if (vIndex > -1) {
+                oldCustomer.vehicles.splice(vIndex, 1);
+            }
+
+            const newCustomer = db.customers.find(c => c.id === newCustId);
+            newCustomer.vehicles.push({ plate: newPlate, model: newModel });
+
+            logActivity('TRANSFER_VEHICLE', `Transferred vehicle ${oldPlate} (now ${newPlate}) to ${newCustomer.name}`);
+            save();
+            render('customers');
+            openVehicleRegistryModal();
+        }
+
+        function openUserModal(uid = null) {
+            const u = uid ? db.users.find(x => x.id === uid) : { name: '', user: '', pass: '', role: 'Staff', status: 'Active' };
+            
+            const p = u.permissions || {
+                canDelete: u.role === 'Admin',
+                canRestore: u.role === 'Admin',
+                canClearLogs: u.role === 'Admin',
+                canEditSettings: u.role === 'Admin'
+            };
+
+            let extraButtons = "";
+            if(uid && u.user !== 'admin') {
+                extraButtons = `
+                    <button class="btn btn-warning" style="width:100%; margin-top:10px" onclick="resetPass(${uid})">Reset Password</button>
+                    <button class="btn btn-danger" style="width:100%; margin-top:10px" onclick="deleteUser(${uid})">Delete User Account permanently</button>`;
+            }
+            document.getElementById('modalContent').innerHTML = `
+                <h2>Manage User & Roles Authorization</h2>
+                <input type="text" id="mName" placeholder="Name" value="${u.name}">
+                <input type="text" id="mUser" placeholder="User" value="${u.user}" ${uid?'disabled':''}>
+                ${!uid ? '<input type="password" id="mPass" placeholder="Password">' : ''}
+                <select id="mRole" onchange="autoAssignPermissionPresets(this.value)">
+                    <option ${u.role==='Admin'?'selected':''}>Admin</option>
+                    <option ${u.role==='Staff'?'selected':''}>Staff</option>
+                </select>
+                <select id="mStatus"><option ${u.status==='Active'?'selected':''}>Active</option><option ${u.status==='Suspended'?'selected':''}>Suspended</option></select>
+                
+                <div style="background:#f8f9fa; padding:15px; border-radius:8px; margin:10px 0; border:1px solid #ddd;">
+                    <h4 style="margin:0 0 10px 0; font-size:13px; color:var(--primary); text-transform:uppercase;">Configure Explicit Granular Permissions</h4>
+                    <label style="display:flex; align-items:center; gap:8px; margin-bottom:8px; font-size:12px; font-weight:bold;">
+                        <input type="checkbox" id="pDelete" ${p.canDelete ? 'checked' : ''}> Grant Soft-Delete Rights
+                    </label>
+                    <label style="display:flex; align-items:center; gap:8px; margin-bottom:8px; font-size:12px; font-weight:bold;">
+                        <input type="checkbox" id="pRestore" ${p.canRestore ? 'checked' : ''}> Grant Recycle Bin Restore Access
+                    </label>
+                    <label style="display:flex; align-items:center; gap:8px; margin-bottom:8px; font-size:12px; font-weight:bold;">
+                        <input type="checkbox" id="pLogs" ${p.canClearLogs ? 'checked' : ''}> Grant Activity Logs Purge Rights
+                    </label>
+                    <label style="display:flex; align-items:center; gap:8px; font-size:12px; font-weight:bold;">
+                        <input type="checkbox" id="pSettings" ${p.canEditSettings ? 'checked' : ''}> Grant Global Settings Mastery
+                    </label>
+                </div>
+
+                <button class="btn btn-success" style="width:100%" onclick="saveUser(${uid})">Save Details & Rule Schemes</button>
+                ${extraButtons}
                 <button class="btn" style="width:100%; margin-top:10px; background:#95a5a6" onclick="closeModal()">Cancel</button>`;
             document.getElementById('modal').style.display = 'flex';
         }
 
-        function adjustBalance(id, type, method) {
-            const amt = parseFloat(document.getElementById('pAmt').value);
-            const customer = db.customers.find(c => c.id === id);
-            if(!amt || amt <= 0) return alert("Valid amount required");
-            const isConfirmed = confirm(`Are you sure to pay/adjust $${amt.toFixed(2)} via ${method}?`);
-            if(!isConfirmed) return;
-            const orderId = Date.now();
-            if (type === 'subtract') { 
-                customer.balance -= amt; 
-                db.orders.unshift({ id: orderId, phone: customer.phone, name: customer.name, detail: `Account Payment (${method})`, amount: amt, method: 'paid', date: new Date().toISOString(), isAdjustment: true }); 
-            } 
-            else { 
-                customer.balance += amt; 
-                db.orders.unshift({ id: orderId, phone: customer.phone, name: customer.name, detail: `Manual Debt Adjustment`, amount: amt, method: 'credit', date: new Date().toISOString(), isAdjustment: true }); 
-            }
-            save(); showInvoice(orderId); render('customers');
+        function autoAssignPermissionPresets(role) {
+            const isAdmin = role === 'Admin';
+            document.getElementById('pDelete').checked = isAdmin;
+            document.getElementById('pRestore').checked = isAdmin;
+            document.getElementById('pLogs').checked = isAdmin;
+            document.getElementById('pSettings').checked = isAdmin;
         }
 
-        function loadVehicles(phone) {
-            const c = db.customers.find(x => x.phone === phone);
+        function resetPass(uid) {
+            const newP = prompt("Enter new password:");
+            if(newP) {
+                const user = db.users.find(u => u.id === uid);
+                user.pass = newP;
+                save();
+                alert("Password reset successfully.");
+                logActivity('USER_PASS_RESET', `Reset password for ${user.user}`);
+            }
+        }
+
+        function deleteUser(uid) {
+            if(confirm("Are you sure you want to delete this user permanently?")) {
+                const targetUser = db.users.find(u => u.id === uid);
+                if (targetUser.user === 'admin') return alert("Protected Root Admin Account cannot be deleted.");
+                
+                db.users = db.users.filter(u => u.id !== uid);
+                save(); closeModal(); render('users');
+                logActivity('USER_DELETE', `Deleted user account metadata ID: ${uid}`);
+            }
+        }
+
+        function saveUser(uid) {
+            if (!confirm("Are you sure you want to save this user's profile and permissions?")) return;
+            const n = document.getElementById('mName').value;
+            const r = document.getElementById('mRole').value;
+            const s = document.getElementById('mStatus').value;
+            
+            const perms = {
+                canDelete: document.getElementById('pDelete').checked,
+                canRestore: document.getElementById('pRestore').checked,
+                canClearLogs: document.getElementById('pLogs').checked,
+                canEditSettings: document.getElementById('pSettings').checked
+            };
+
+            if(uid) {
+                const x = db.users.find(i => i.id === uid);
+                x.name = n; x.role = r; x.status = s;
+                x.permissions = perms;
+                logActivity('USER_UPDATE', `Updated permissions layout for ${x.user}`);
+            } else {
+                const user = document.getElementById('mUser').value;
+                const p = document.getElementById('mPass').value;
+                db.users.push({ id: Date.now(), name: n, user, pass: p, role: r, status: s, permissions: perms });
+                logActivity('USER_CREATE', `Created account ${user} assigned role profile ${r}`);
+            }
+            save(); closeModal(); render('users');
+        }
+
+        function setOrderType(type) { db.currentOrderType = type; save(); render('orders'); }
+        
+        function updateOrderSearchPlaceholder() {
+            const searchBy = document.getElementById('oSearchBy').value;
+            const searchInput = document.getElementById('oSearch');
+            if (searchBy === 'phone') {
+                searchInput.placeholder = 'Search by phone...';
+            } else if (searchBy === 'plate') {
+                searchInput.placeholder = 'Search by car plate...';
+            } else {
+                searchInput.placeholder = 'Search by personal/org number...';
+            }
+        }
+
+        function normalizeText(value) {
+            return (value || '').toString().trim().toLowerCase();
+        }
+
+        function normalizePhone(value) {
+            return (value || '').toString().replace(/\D+/g, '');
+        }
+
+        function getVehiclePlate(vehicle) {
+            return typeof vehicle === 'string' ? vehicle : (vehicle?.plate || '');
+        }
+
+        function getVehicleModel(vehicle) {
+            return typeof vehicle === 'object' ? (vehicle?.model || '') : '';
+        }
+
+        function getVehicleDisplay(vehicle) {
+            const plate = getVehiclePlate(vehicle);
+            const model = getVehicleModel(vehicle);
+            return model ? `${plate} (${model})` : plate;
+        }
+
+        function normalizePlate(value) {
+            return getVehiclePlate(value).replace(/\s+/g, '').toLowerCase();
+        }
+
+        function updateServicePrice() {
+            const serviceText = document.getElementById('oServ').value.trim();
+            const priceInput = document.getElementById('oPrice');
+            const selectedPlate = document.getElementById('oVeh').value;
+            const cust = getCustomerFromOrderSearch();
+            
+            if(cust && selectedPlate && getVehicleSubscriptionStatus(cust, selectedPlate).isActive) {
+                priceInput.value = 0;
+            } else {
+                const matched = db.services.find(s => s.name.toLowerCase() === serviceText.toLowerCase()) ||
+                    db.services.find(s => s.name.toLowerCase().includes(serviceText.toLowerCase()));
+                if (matched) priceInput.value = matched.price;
+            }
+            updateServiceVAT();
+        }
+
+        function updateServiceVAT() {
+            const price = parseFloat(document.getElementById('oPrice').value) || 0;
+            const vatValue = price * 0.25;
+            const totalValue = price + vatValue;
+            document.getElementById('oVat').value = formatSEK(vatValue);
+            document.getElementById('oTotal').value = formatSEK(totalValue);
+        }
+
+        function formatSEK(value) {
+            const num = parseFloat(value) || 0;
+            return `${num.toFixed(2)} kr`;
+        }
+
+        function getCustomerTotalVat(customer) {
+            return db.orders
+                .filter(o => o.phone === customer.phone && o.method === 'credit')
+                .reduce((sum, o) => sum + (parseFloat(o.vatAmount) || 0), 0);
+        }
+
+        function getCustomerFromOrderSearch() {
+            const value = document.getElementById('oSearch').value.trim();
+            const searchBy = document.getElementById('oSearchBy').value;
+            if (!value) return null;
+            if (searchBy === 'plate') {
+                const searchPlate = normalizePlate(value);
+                return db.customers.find(x => x.vehicles.some(v => normalizePlate(v).includes(searchPlate)));
+            }
+            if (searchBy === 'personal') {
+                const searchPnum = normalizeText(value).replace(/\D+/g, '');
+                return db.customers.find(x => normalizeText(x.pNum).replace(/\D+/g, '').includes(searchPnum));
+            }
+            const searchPhone = normalizePhone(value);
+            return db.customers.find(x => normalizePhone(x.phone).includes(searchPhone));
+        }
+
+        function loadVehicles(value) {
+            const c = getCustomerFromOrderSearch();
             const s = document.getElementById('oVeh');
-            if(c) {
-                let options = c.vehicles.map(v => `<option value="${v}">${v}</option>`).join('');
-                options += `<option value="ADD_NEW_VEHICLE">+ Add New Vehicle</option>`;
-                s.innerHTML = options;
-            } else { s.innerHTML = '<option value="">No Customer Found</option>'; }
+            const modelInput = document.getElementById('oVehModel');
+            const preview = document.getElementById('orderCustPreview');
+            const searchBy = document.getElementById('oSearchBy').value;
+            const removeBtnCont = document.getElementById('removeVehCont');
+
+            if (c) {
+                preview.style.display = 'block';
+                preview.innerHTML = `<div style="font-weight:bold; color:var(--primary)">${c.name} (${c.type})</div>
+                                     <div style="font-size:12px;">📍 ${c.address || 'No Address'} | 🆔 ${c.pNum || 'No ID'}</div>`;
+                
+                let opts = `<option value="">-- Select Vehicle --</option>`;
+                opts += c.vehicles.map(v => `<option value="${getVehiclePlate(v)}">${getVehicleDisplay(v)}</option>`).join('');
+                s.innerHTML = opts + `<option value="ADD_NEW_VEHICLE">+ Add New Vehicle</option>`;
+                
+                if (searchBy === 'plate' && value) {
+                    const selectedPlate = c.vehicles.find(v => normalizePlate(getVehiclePlate(v)) === normalizePlate(value));
+                    if (selectedPlate) {
+                        s.value = getVehiclePlate(selectedPlate);
+                        modelInput.value = getVehicleModel(selectedPlate);
+                        if(removeBtnCont) removeBtnCont.style.display = 'block';
+                        evaluateOrderInterfaceSubscriptionStatus(c, getVehiclePlate(selectedPlate));
+                    }
+                } else {
+                    modelInput.value = '';
+                    if(removeBtnCont) removeBtnCont.style.display = 'none';
+                    evaluateOrderInterfaceSubscriptionStatus(c, '');
+                }
+            } else {
+                preview.style.display = 'none';
+                evaluateOrderInterfaceSubscriptionStatus(null, '');
+                s.innerHTML = '<option value="">No Customer Found</option>';
+                modelInput.value = '';
+                if(removeBtnCont) removeBtnCont.style.display = 'none';
+            }
         }
 
         function handleVehicleChange(val) {
+            const modelInput = document.getElementById('oVehModel');
+            const removeBtnCont = document.getElementById('removeVehCont');
+            const cust = getCustomerFromOrderSearch();
+            
             if (val === "ADD_NEW_VEHICLE") {
-                const phone = document.getElementById('oPhone').value;
-                const newVehicle = prompt("Enter vehicle plate/model:");
-                if (newVehicle) { db.customers.find(c => c.phone === phone).vehicles.push(newVehicle); save(); loadVehicles(phone); document.getElementById('oVeh').value = newVehicle; }
+                if (!cust) return alert('Select a valid customer before adding a vehicle.');
+                const newPlate = prompt("Enter vehicle plate:");
+                if (newPlate) {
+                    const newModel = prompt("Enter vehicle model (optional):", "") || "";
+                    cust.vehicles.push({ plate: newPlate.trim(), model: newModel.trim() });
+                    save();
+                    loadVehicles(document.getElementById('oSearch').value);
+                    document.getElementById('oVeh').value = newPlate.trim();
+                    modelInput.value = newModel.trim();
+                    if(removeBtnCont) removeBtnCont.style.display = 'block';
+                    evaluateOrderInterfaceSubscriptionStatus(cust, newPlate.trim());
+                }
+            } else if (val !== "") {
+                if (!cust) return;
+                const selectedVehicle = cust.vehicles.find(v => normalizePlate(getVehiclePlate(v)) === normalizePlate(val));
+                modelInput.value = selectedVehicle ? getVehicleModel(selectedVehicle) : '';
+                if(removeBtnCont) removeBtnCont.style.display = 'block';
+                evaluateOrderInterfaceSubscriptionStatus(cust, val);
+            } else {
+                modelInput.value = '';
+                if(removeBtnCont) removeBtnCont.style.display = 'none';
+                evaluateOrderInterfaceSubscriptionStatus(cust, '');
+            }
+        }
+
+        function evaluateOrderInterfaceSubscriptionStatus(customer, plate) {
+            const subNotice = document.getElementById('subNoticeBox');
+            const subExpiredNotice = document.getElementById('subExpiredNoticeBox');
+            const submitBtn = document.getElementById('oSubmitBtn');
+            const priceInput = document.getElementById('oPrice');
+            if(!subNotice || !subExpiredNotice) return;
+
+            if(customer && plate) {
+                const subInfo = getVehicleSubscriptionStatus(customer, plate);
+                if(subInfo.isActive) {
+                    subNotice.style.display = 'block';
+                    subExpiredNotice.style.display = 'none';
+                    priceInput.value = 0;
+                    priceInput.disabled = true; // Lock price at 0 SEK
+                    if (submitBtn) {
+                        submitBtn.disabled = true;
+                        submitBtn.innerText = "🔒 Security Blocked: Active Subscription (No payment allowed)";
+                        submitBtn.style.background = "var(--danger)";
+                    }
+                } else {
+                    subNotice.style.display = 'none';
+                    subExpiredNotice.style.display = 'block';
+                    priceInput.disabled = false;
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.innerText = "Finalize Order & Print";
+                        submitBtn.style.background = "var(--success)";
+                    }
+                }
+            } else {
+                subNotice.style.display = 'none';
+                subExpiredNotice.style.display = 'none';
+                priceInput.disabled = false;
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = "Finalize Order & Print";
+                    submitBtn.style.background = "var(--success)";
+                }
+            }
+            updateServiceVAT();
+        }
+
+        function removeVehicle() {
+            const phone = document.getElementById('oSearch').value;
+            const selectedVeh = document.getElementById('oVeh').value;
+            if(!selectedVeh || selectedVeh === "ADD_NEW_VEHICLE") return;
+
+            if(confirm(`Are you sure you want to remove vehicle ${selectedVeh}?`)) {
+                const cust = getCustomerFromOrderSearch();
+                cust.vehicles = cust.vehicles.filter(v => normalizePlate(getVehiclePlate(v)) !== normalizePlate(selectedVeh));
+                save();
+                logActivity('VEHICLE_REMOVED', `Removed ${selectedVeh} from ${cust.name}`);
+                loadVehicles(document.getElementById('oSearch').value);
             }
         }
 
         function processOrder() {
-            const phone = document.getElementById('oPhone').value;
-            const cust = db.customers.find(c => c.phone === phone);
-            const serv = db.services.find(s => s.id == document.getElementById('oServ').value);
+            const cust = getCustomerFromOrderSearch();
+            const plate = document.getElementById('oVeh').value;
+            
+            if(!cust) return alert("Select a valid customer.");
+            if(!plate || plate === "ADD_NEW_VEHICLE") return alert("Select a vehicle.");
+
+            // Strict fallback intercept validation
+            const subInfo = getVehicleSubscriptionStatus(cust, plate);
+            if(subInfo.isActive) {
+                return alert("Security Refusal: This vehicle has an active Unlimited Wash Plan subscription. No new booking payment can be processed until it is deactivated or expired!");
+            }
+
+            if (!confirm("Are you sure you want to process and finalize this order?")) return;
+            const serviceInput = document.getElementById('oServ').value.trim();
+            const priceValue = parseFloat(document.getElementById('oPrice').value);
             const method = document.getElementById('oPay').value;
-            if(!cust) return alert("Select a valid customer first.");
-            if(method === 'credit') cust.balance += serv.price;
+            const model = document.getElementById('oVehModel').value.trim();
+            
+            if(isNaN(priceValue) || priceValue < 0) return alert("Enter a valid price.");
+            
+            const serviceName = serviceInput || 'Custom Service';
+            const preVat = priceValue;
+            const vatAmount = parseFloat((preVat * 0.25).toFixed(2));
+            const orderAmount = parseFloat((preVat + vatAmount).toFixed(2));
+            if(method === 'credit') cust.balance = (cust.balance || 0) + orderAmount;
             const orderId = Date.now();
-            db.orders.unshift({ id: orderId, phone, name: cust.name, vehicle: document.getElementById('oVeh').value, detail: `${serv.name} (${db.currentOrderType})`, amount: serv.price, method, date: new Date().toISOString() });
+            db.orders.unshift({ 
+                id: orderId,
+                phone: cust.phone,
+                name: cust.name,
+                vehicle: model ? `${plate} (${model})` : plate,
+                detail: `${serviceName} (${db.currentOrderType})`, 
+                amount: orderAmount,
+                baseAmount: priceValue,
+                preVat,
+                vatAmount,
+                method, date: new Date().toISOString(),
+                staff: currentUser.name 
+            });
             save(); showInvoice(orderId);
+        }
+
+        function openPaymentCalc(custId) {
+            const customer = db.customers.find(c => c.id === custId);
+            document.getElementById('modalContent').innerHTML = `
+                <h2>${customer.name} Payment</h2>
+                <label class="form-label">Payment Amount</label>
+                <input type="number" id="pAmt" placeholder="Amount" step="0.01">
+                <label class="form-label" style="margin-top:15px;">Payment Method</label>
+                <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:5px;">
+                    <button class="btn btn-success" onclick="adjustBalance(${customer.id}, 'subtract', 'Cash')">Cash</button>
+                    <button class="btn" style="background:var(--bank)" onclick="adjustBalance(${customer.id}, 'subtract', 'Bank')">Bank</button>
+                    <button class="btn" style="background:var(--swish); color:black" onclick="adjustBalance(${customer.id}, 'subtract', 'Swish')">Swish</button>
+                </div>
+                <button class="btn" style="width:100%; margin-top:15px; background:#95a5a6" onclick="closeModal()">Cancel</button>`;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        function adjustBalance(id, type, method) {
+            if (!confirm(`Are you sure you want to apply this ${method} payment to the customer's account?`)) return;
+            const amt = parseFloat(document.getElementById('pAmt').value);
+            const customer = db.customers.find(c => c.id === id);
+            if(!amt) return;
+            customer.balance = (customer.balance || 0) - amt;
+            const orderId = Date.now();
+            db.orders.unshift({ 
+                id: orderId, phone: customer.phone, name: customer.name, 
+                detail: `Account Payment (${method})`, amount: amt, method: 'paid', 
+                date: new Date().toISOString(), isAdjustment: true, staff: currentUser.name 
+            });
+            save(); showInvoice(orderId); render('customers');
         }
 
         function showInvoice(orderId) {
             const order = db.orders.find(o => o.id === orderId);
             const customer = db.customers.find(c => c.phone === order.phone);
-            const content = document.getElementById('modalContent');
-            content.innerHTML = `
+            const baseAmount = order.baseAmount || 0;
+            const preVat = order.preVat || baseAmount;
+            const vatAmount = order.vatAmount || parseFloat((preVat * 0.25).toFixed(2));
+            document.getElementById('modalContent').innerHTML = `
                 <div class="invoice-wrapper">
                     <div class="invoice-header">
-                        <div class="logo-box"><div class="logo-icon">E</div><div class="company-info"><h2>Egale Carwash</h2></div></div>
-                        <div style="text-align:right"><small>Receipt ID</small><br><strong>#${order.id.toString().slice(-6)}</strong></div>
+                        <div class="logo-box"><div class="logo-icon">E</div><h2>Egale Carwash</h2></div>
+                        <div style="text-align:right;">#${order.id.toString().slice(-6)}</div>
                     </div>
-                    <div class="inv-body">
-                        <div class="inv-row"><span class="inv-label">Type:</span> <span class="inv-value">${order.isAdjustment ? 'Account Adjustment' : 'Service Order'}</span></div>
-                        <div class="inv-row"><span class="inv-label">Date:</span> <span class="inv-value">${new Date(order.date).toLocaleString()}</span></div>
-                        <div class="inv-row"><span class="inv-label">Customer:</span> <span class="inv-value">${order.name}</span></div>
-                        <div class="inv-row"><span class="inv-label">Vehicle:</span> <span class="inv-value">${order.vehicle || 'N/A'}</span></div>
-                        <div class="inv-row"><span class="inv-label">Wash Service:</span> <span class="inv-value">${order.detail}</span></div>
-                        <div class="inv-row"><span class="inv-label">Status:</span> <span class="inv-value" style="color:${order.method === 'credit' ? 'red' : 'green'}">${order.method.toUpperCase()}</span></div>
-                    </div>
+                    <div class="inv-row"><span class="inv-label">Date:</span> <span class="inv-value">${new Date(order.date).toLocaleString()}</span></div>
+                    <div class="inv-row"><span class="inv-label">Customer:</span> <span class="inv-value">${order.name}</span></div>
+                    <div class="inv-row"><span class="inv-label">Vehicle/Target:</span> <span class="inv-value">${order.vehicle || 'N/A'}</span></div>
+                    <div class="inv-row"><span class="inv-label">Service:</span> <span class="inv-value">${order.detail}</span></div>
                     <div class="inv-total-section">
-                        <div class="inv-row"><span class="inv-label">Total Amount:</span> <span class="inv-value">$${order.amount.toFixed(2)}</span></div>
-                        <div class="inv-row" style="border-top: 1px solid #ccc; padding-top:10px; margin-top:10px;"><span class="inv-label">Account Balance:</span> <span class="inv-value balance-box">$${customer.balance.toFixed(2)}</span></div>
-                    </div>
-                    <div class="no-print" style="display:flex; gap:10px; margin-top:20px;"><button class="btn btn-success" style="flex:1" onclick="window.print()">Print Invoice</button><button class="btn" style="flex:1; background:#95a5a6" onclick="closeModal()">Close</button></div>
+                        <div class="inv-row"><span>Status:</span> <span style="color:${order.method==='credit'?'red':'green'}">${order.method.toUpperCase()}</span></div>
+                        ${order.isAdjustment ? '' : `
+                            <div class="inv-row"><span>A-pris (exkl. moms):</span> <span class="inv-value">${formatSEK(baseAmount)}</span></div>
+                            <div class="inv-row"><span>Summa exkl. moms:</span> <span class="inv-value">${formatSEK(preVat)}</span></div>
+                            <div class="inv-row"><span>Moms (25%):</span> <span class="inv-value">${formatSEK(vatAmount)}</span></div>
+                        `}
+                        <div class="inv-row"><span>${order.isAdjustment ? 'Payment Amount:' : 'Totalt (inkl. moms):'}</span> <span class="inv-value">${formatSEK(order.amount)}</span></div>
+                        <div class="inv-row" style="border-top:1px solid #ddd; padding-top:5px; margin-top:5px;">
+                            <span class="inv-label">Current Balance:</span> <span class="balance-box">${formatSEK(customer ? customer.balance : 0)}</span>
+                        </div>
+                </div>
+                <div class="no-print" style="margin-top:15px; display:flex; gap:10px;">
+                    <button class="btn btn-success" style="flex:1" onclick="window.print()">Print</button>
+                    <button class="btn" style="flex:1; background:#95a5a6" onclick="closeModal()">Close</button>
                 </div>`;
             document.getElementById('modal').style.display = 'flex';
         }
 
-        function closeModal() { document.getElementById('modal').style.display = 'none'; render(db.customers.length > 0 ? 'customers' : 'dashboard'); }
+        function generatePDFReport(timeFrame, phone) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            let days = timeFrame === 'Daily' ? 0 : (timeFrame === 'Weekly' ? 7 : 30);
+            const reportData = getRevenue(days, phone);
+            
+            doc.setFontSize(18);
+            doc.text("Egale Carwash - Statement", 14, 20);
+            doc.setFontSize(11);
+            doc.text(`Period: ${timeFrame} | Generated: ${new Date().toLocaleDateString()}`, 14, 28);
+            
+            const rows = reportData.rawOrders.map(o => [
+                new Date(o.date).toLocaleDateString(),
+                o.name,
+                o.detail,
+                formatSEK(o.amount),
+                o.method
+            ]);
+
+            doc.autoTable({
+                startY: 35, head: [['Date', 'Customer', 'Service', 'Amount', 'Method']], body: rows,
+            });
+
+            const finalY = doc.lastAutoTable.finalY || 40;
+            doc.text(`Total Volume: ${formatSEK(reportData.paid + reportData.credit)}`, 14, finalY + 10);
+            doc.save(`Egale_Report_${timeFrame}.pdf`);
+        }
+
+        function showMonthlyInvoice(custId) {
+            const customer = db.customers.find(c => c.id === custId);
+            const history = db.orders.filter(o => o.phone === customer.phone && (o.method === 'credit' || o.isAdjustment === true));
+            const invoiceDate = new Date();
+            const dueDate = new Date();
+            dueDate.setDate(dueDate.getDate() + 30);
+
+            const invoiceNo = Date.now().toString().slice(-8);
+            const ocrNo = invoiceNo + "00";
+            
+            let totalCredit = 0;
+            let totalPaid = 0;
+            let totalVat = 0;
+
+            const historyHtml = history.length > 0 ? history.map(o => {
+                if (o.isAdjustment) {
+                    totalPaid += o.amount;
+                    return `
+                        <tr style="border-bottom:1px solid #eee;">
+                            <td style="padding:8px;">${new Date(o.date).toLocaleDateString()}</td>
+                            <td style="padding:8px;">${o.vehicle || '-'}</td>
+                            <td style="padding:8px; color: var(--success); font-weight: bold;">Inbetalning (${o.detail})</td>
+                            <td style="padding:8px; text-align:right; color: var(--success);">- ${formatSEK(o.amount)}</td>
+                        </tr>
+                    `;
+                } else {
+                    totalCredit += o.amount;
+                    totalVat += o.vatAmount || (o.amount - (o.amount / 1.25));
+                    return `
+                        <tr style="border-bottom:1px solid #eee;">
+                            <td style="padding:8px;">${new Date(o.date).toLocaleDateString()}</td>
+                            <td style="padding:8px;">${o.vehicle || '-'}</td>
+                            <td style="padding:8px;">${o.detail}</td>
+                            <td style="padding:8px; text-align:right;">${formatSEK(o.amount)}</td>
+                        </tr>
+                    `;
+                }
+            }).join('') : '<tr><td colspan="4" style="text-align:center; padding:20px;">Ingen kredithistorik hittades</td></tr>';
+
+            const totalExVat = totalCredit - totalVat;
+            const balanceDue = totalCredit - totalPaid;
+            const qrData = encodeURIComponent(ocrNo);
+
+            document.getElementById('modalContent').innerHTML = `
+                <div id="printableInvoice" style="padding: 10px; color: #333; font-family: Arial, sans-serif; min-height: 80vh; display: flex; flex-direction: column;">
+                    <div style="flex: 1;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:40px; flex-wrap:wrap; gap:20px;">
+                            <div>
+                                <h1 style="color:var(--primary); margin:0;">FAKTURA</h1>
+                                <p style="font-size:12px;">
+                                Fakturanummer: <strong>${invoiceNo}</strong><br>
+                                Fakturadatum: ${invoiceDate.toLocaleDateString()}<br>
+                                Förfallodatum: <strong style="color:var(--danger);">${dueDate.toLocaleDateString()}</strong><br>
+                                Bankgiro: 6021562 <br>
+                                OCR NR: <strong>${ocrNo}</strong>
+                                </p>
+                            </div>
+                            <div style="text-align:right;">
+                                <h2 style="margin:0;">Egale Carwash</h2>
+                                <p style="font-size:11px;">Tusenårsgatan 10<br>415 34 Göteborg<br>Org.nr: 556677-8899</p>
+                            </div>
+                        </div>
+
+                        <div style="display:flex; justify-content:space-between; margin-bottom:30px; flex-wrap:wrap; gap:20px;">
+                            <div style="width:100%; max-width:280px; border:1px solid #ddd; padding:10px; border-radius:5px;">
+                                <small style="color:#777; display:block; margin-bottom:5px;">KUND / BETALARE</small>
+                                <strong>${customer.name}</strong><br>
+                                ${customer.company ? `(${customer.company})<br>` : ''}
+                                ${customer.address || 'Ingen adress angiven'}<br>
+                                ${customer.region || ''}<br>
+                                ${customer.pNum || ''}
+                            </div>
+                            <div>
+                                <p style="font-size:12px; margin:0;"><strong>Antal Registrerade Fordon:</strong> ${customer.vehicles.length}</p>
+                                <p style="font-size:12px; margin-top:10px;"><strong>Noteringar:</strong><br>${customer.note || 'N/A'}</p>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive-container">
+                            <table style="width:100%; border-collapse: collapse; font-size:12px; margin-bottom:30px;">
+                                <thead>
+                                    <tr style="background:#eee; border-bottom:2px solid #333;">
+                                        <th style="padding:8px; text-align:left;">Datum</th>
+                                        <th style="padding:8px; text-align:left;">Fordon</th>
+                                        <th style="padding:8px; text-align:left;">Beskrivning</th>
+                                        <th style="padding:8px; text-align:right;">Belopp</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${historyHtml}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:20px;">
+                            <div>
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${qrData}&color=333333" style="opacity: 0.6; width: 80px; height: 80px; margin-bottom: 5px;" alt="QR Code">
+                                <div style="font-size: 9px; color: #7f8c8d;">Skanna for OCR</div>
+                            </div>
+                            <div style="width:250px; background:#f9f9f9; padding:15px; border:1px solid #ddd; text-align:right; margin-left:auto;">
+                                <p style="margin:0; font-size:12px;">Kreditköp exkl. moms: ${formatSEK(totalExVat)}</p>
+                                <p style="margin:5px 0; font-size:12px;">Moms på kreditköp (25%): ${formatSEK(totalVat)}</p>
+                                <p style="margin:5px 0 10px 0; font-size:12px; font-weight:bold;">Totalt Kreditköp: ${formatSEK(totalCredit)}</p>
+                                <p style="margin:5px 0; font-size:12px; color: var(--success); border-top: 1px solid #ddd; border-bottom: 1px solid #ddd; padding: 5px 0;">Avgår Inbetalningar: -${formatSEK(totalPaid)}</p>
+                                <h3 style="margin:10px 0 0; color:var(--danger);">ATT BETALA: ${formatSEK(balanceDue)}</h3>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 40px; padding-top: 15px; border-top: 1px solid #ddd; text-align: center; font-size: 10px; color: #95a5a6;">
+                        <p style="margin: 2px 0;">Egale Carwash Pro • Tusenårsgatan 10, 415 34 Göteborg</p>
+                        <p style="margin: 2px 0;">Org.nummer: 556677-8899 • Bankgiro: 6021562 • Godkänd för F-skatt</p>
+                    </div>
+                </div>
+                
+                <div class="no-print" style="margin-top:20px; display:flex; gap:10px;">
+                    <button class="btn btn-success" style="flex:1" onclick="window.print()">Skriv ut Faktura</button>
+                    <button class="btn" style="flex:1; background:#95a5a6" onclick="closeModal()">Stäng</button>
+                </div>
+            `;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        checkActiveSession();
     </script>
 </body>
 </html>
